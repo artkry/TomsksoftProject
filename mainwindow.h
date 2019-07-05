@@ -8,6 +8,7 @@ class QDialogButtonBox;
 class QMenu;
 class QMenuBar;
 class QPushButton;
+class DBFasade;
 
 class MainWindow : public QDialog
 {
@@ -15,6 +16,7 @@ class MainWindow : public QDialog
 
 public:
 	MainWindow();
+	~MainWindow();
 
 private:
 	void createMenu();
@@ -24,6 +26,7 @@ private:
 
 	QMenu *fileMenu;
 	QAction *exitAction;
+	DBFasade *sdb;
 };
 
 

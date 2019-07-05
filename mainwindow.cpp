@@ -1,4 +1,3 @@
-//#include <QtWidgets>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QMenuBar>
@@ -6,10 +5,13 @@
 #include <QAction>
 
 #include "mainwindow.h"
+#include "dbfasade.h"
 
 MainWindow::MainWindow()
 {
 	createMenu();
+
+	sdb = new DBFasade;
 
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->setMenuBar(menuBar);
@@ -17,6 +19,8 @@ MainWindow::MainWindow()
 
 	setWindowTitle(tr("Home Accounting"));
 }
+
+MainWindow::~MainWindow() {}
 
 void MainWindow::createMenu()
 {

@@ -1,5 +1,5 @@
-#ifndef LOGINWINDOW_H
-#define LOGINWINDOW_H
+#ifndef REGISTRATIONWINDOW_H
+#define REGISTRATIONWINDOW_H
 
 #include <QDialog>
 
@@ -13,26 +13,27 @@ class QMenu;
 class QMenuBar;
 class DBFasade;
 
-class LoginWindow : public QDialog
+
+class RegistrationWindow : public QDialog
 {
 	Q_OBJECT
 
 public:
-	LoginWindow();
-	~LoginWindow();
+	RegistrationWindow();
+	~RegistrationWindow();
 
 private slots:
     void on_enterButton_clicked();
-	void on_registrButton_clicked();
+	void go_to_loginwindow();
 
 private:
-	void createFormGroupBox();
-	void createMenu();
 	void createHorizontalGroupBox();
+	void createMenu();
+	void createFormGroupBox();
 
 	QMenuBar *menuBar;
-	QGroupBox *formGroupBox;
 	QGroupBox *horizontalGroupBox;
+	QGroupBox *formGroupBox;
 	QLineEdit *login;
 	QLineEdit *pass;
 
@@ -41,4 +42,8 @@ private:
 	DBFasade *sdb;
 };
 
-#endif // !LOGINWINDOW_H
+
+
+
+
+#endif // !REGISTRATIONWINDOW_H

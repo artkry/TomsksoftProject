@@ -7,13 +7,15 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui Sql)
 set(PROJECT_HEADERS
     mainwindow.h
     loginwindow.h
-    dbfasade.h)
+    dbfasade.h
+    registrationwindow.h)
 
 set(PROJECT_SOURCES 
     main.cpp
     mainwindow.cpp
     loginwindow.cpp
-    dbfasade.cpp)
+    dbfasade.cpp
+    registrationwindow.cpp)
 
 qt5_wrap_cpp(PROJECT_SOURCES_MOC ${PROJECT_HEADERS})
 

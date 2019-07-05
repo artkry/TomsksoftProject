@@ -1,5 +1,6 @@
 #include "loginwindow.h"
 #include "dbfasade.h"
+#include "registrationwindow.h"
 
 #include <QGroupBox>
 #include <QFormLayout>
@@ -51,9 +52,12 @@ void LoginWindow::createFormGroupBox()
 	layout->addRow(new QLabel(tr("Password: ")), pass);
 
 	QPushButton *enterButton = new QPushButton(tr("Sign-IN"), this);
+	QPushButton *registrButton = new QPushButton(tr("Create new User"), this);
 	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
+	connect(registrButton, SIGNAL(clicked()), this, SLOT(on_registrButton_clicked()));
 	//enterButton->setGeometry(QRect(QPoint(100, 100), QSize(200, 50)));
 	layout->addWidget(enterButton);
+	layout->addWidget(registrButton);
 
 	formGroupBox->setLayout(layout);
 }
@@ -78,6 +82,13 @@ void LoginWindow::on_enterButton_clicked()
 		qDebug() << "Auth is success!";
 		//переход на main форму
 	}
+}
+
+void LoginWindow::on_registrButton_clicked()
+{
+	RegistrationWindow registrwindow;
+	registrwindow.show();
+	this->hide();
 }
 
 LoginWindow::~LoginWindow() {
