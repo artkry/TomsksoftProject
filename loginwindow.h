@@ -11,6 +11,7 @@ class QPushButton;
 class QTextEdit;
 class QMenu;
 class QMenuBar;
+class DBFasade;
 
 class LoginWindow : public QDialog
 {
@@ -21,7 +22,7 @@ public:
 	~LoginWindow();
 
 private slots:
-    void authRequest();
+    void on_enterButton_clicked();
 
 private:
 	void createFormGroupBox();
@@ -31,9 +32,12 @@ private:
 	QMenuBar *menuBar;
 	QGroupBox *formGroupBox;
 	QGroupBox *horizontalGroupBox;
+	QLineEdit *login;
+	QLineEdit *pass;
 
 	QMenu *fileMenu;
 	QAction *exitAction;
+	DBFasade *sdb;
 };
 
 #endif // !LOGINWINDOW_H

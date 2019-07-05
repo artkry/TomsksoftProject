@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
 
 project(HomeAccounting LANGUAGES CXX)
 
@@ -6,12 +6,14 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui Sql)
 
 set(PROJECT_HEADERS
     mainwindow.h
-    loginwindow.h)
+    loginwindow.h
+    dbfasade.h)
 
 set(PROJECT_SOURCES 
     main.cpp
     mainwindow.cpp
-    loginwindow.cpp)
+    loginwindow.cpp
+    dbfasade.cpp)
 
 qt5_wrap_cpp(PROJECT_SOURCES_MOC ${PROJECT_HEADERS})
 

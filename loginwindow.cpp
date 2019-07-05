@@ -1,4 +1,5 @@
 #include "loginwindow.h"
+#include "dbfasade.h"
 
 #include <QGroupBox>
 #include <QFormLayout>
@@ -15,6 +16,8 @@ LoginWindow::LoginWindow()
 	createMenu();
 	createFormGroupBox();
 	createHorizontalGroupBox();
+
+	sdb = new DBFasade;
 
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->setMenuBar(menuBar);
@@ -40,12 +43,15 @@ void LoginWindow::createMenu()
 void LoginWindow::createFormGroupBox()
 {
 	formGroupBox = new QGroupBox(tr("Authorization:"));
+	login = new QLineEdit;
+	pass = new QLineEdit;
+
 	QFormLayout *layout = new QFormLayout;
-	layout->addRow(new QLabel(tr("Login: ")), new QLineEdit);
-	layout->addRow(new QLabel(tr("Password: ")), new QLineEdit);
+	layout->addRow(new QLabel(tr("Login: ")), login);
+	layout->addRow(new QLabel(tr("Password: ")), pass);
 
 	QPushButton *enterButton = new QPushButton(tr("Sign-IN"), this);
-	connect(enterButton, SIGNAL(released()), this, SLOT(authRequest()));
+	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
 	//enterButton->setGeometry(QRect(QPoint(100, 100), QSize(200, 50)));
 	layout->addWidget(enterButton);
 
@@ -61,7 +67,27 @@ void LoginWindow::createHorizontalGroupBox()
 	horizontalGroupBox->setLayout(layout);
 }
 
-void LoginWindow::authRequest()
-{}
+void LoginWindow::on_enterButton_clicked()
+{
+	bool isCorrect = sdb->authRequest(this->login->text(), this->pass->text());
 
-LoginWindow::~LoginWindow() {}
+	if (!isCorrect) {
+		qDebug() << "Auth is failed! Input correct data!";
+	}
+	else {
+		qDebug() << "Auth is success!";
+		//переход на main форму
+	}
+}
+
+LoginWindow::~LoginWindow() {
+	delete sdb;
+
+	delete menuBar;
+	delete formGroupBox;
+	delete horizontalGroupBox;
+	delete login;
+	delete pass;
+	delete fileMenu;
+	delete exitAction;
+}
