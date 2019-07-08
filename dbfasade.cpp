@@ -74,25 +74,51 @@ bool DBFasade::authRequest(QString login, QString pass)
 
 bool DBFasade::createUser(QString login, QString pass)
 {
-	query->clear();
-	bool isCorrect;
-	QString str_ = "INSERT INTO Users (profile_name, passwd) VALUES ('%1','%2');";
-	QString str = str_.arg(login).arg(pass);
+	if (isCreated(login)) {
+		query->clear();
+		bool isCorrect;
+		QString str_ = "INSERT INTO Users (profile_name, passwd) VALUES ('%1','%2');";
+		QString str = str_.arg(login).arg(pass);
 
-	isCorrect = query->exec(str);
+		isCorrect = query->exec(str);
 
-	if (!isCorrect) {
-		qDebug() << "Create User failed(DBFasade createUser)";
-		return false;
+		if (!isCorrect) {
+			qDebug() << "Create User failed(DBFasade createUser)";
+			return false;
+		}
+		else {
+			qDebug() << "Create User success(DBFasade createUser)";
+			return true;
+		}
 	}
 	else {
-		qDebug() << "Create User success(DBFasade createUser)";
+		return false;
+	}
+	
+}
+
+bool DBFasade::isCreated(QString login) 
+{
+	query->clear();
+
+	bool isCorrect;
+	QString str_ = "SELECT id FROM Users WHERE Users.profile_name = '%1';";
+	QString str = str_.arg(login);
+	isCorrect = query->exec(str);
+
+	rec = query->record();
+	query->first();
+
+	if (query->value(rec.indexOf("id")).toInt() != 0) {
+		qDebug() << "This profile name is already exists! Try again.";
+		return false;
+
+	}
+	else {
+		qDebug() << "All right.";
 		return true;
 	}
 }
-
-void DBFasade::isCreated() 
-{}
 
 void DBFasade::pullUserData() 
 {}

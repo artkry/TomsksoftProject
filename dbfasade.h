@@ -15,7 +15,7 @@ public:
 	~DBFasade();
 	bool authRequest(QString login, QString pass);
 	bool createUser(QString login, QString pass);
-	void isCreated();
+	bool isCreated(QString login);
 	void pullUserData();
 	void pushUserData();
 

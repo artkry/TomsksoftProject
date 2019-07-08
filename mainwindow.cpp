@@ -11,8 +11,6 @@ MainWindow::MainWindow()
 {
 	createMenu();
 
-	sdb = new DBFasade;
-
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->setMenuBar(menuBar);
 	setLayout(mainLayout);

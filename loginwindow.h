@@ -13,6 +13,7 @@ class QMenu;
 class QMenuBar;
 class DBFasade;
 class RegistrationWindow;
+class MainWindow;
 
 class LoginWindow : public QDialog
 {
@@ -37,10 +38,13 @@ private:
 	QGroupBox *horizontalGroupBox;
 	QLineEdit *login;
 	QLineEdit *pass;
-	RegistrationWindow *registrwindow;
+	
+	RegistrationWindow *registrWindow;
+	MainWindow *mainWindow;
 
 	QMenu *fileMenu;
 	QAction *exitAction;
+
 	DBFasade *sdb;
 };
 

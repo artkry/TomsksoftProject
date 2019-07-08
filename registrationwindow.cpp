@@ -14,7 +14,7 @@
 
 RegistrationWindow::RegistrationWindow()
 {
-	
+	//setAttribute(Qt::WA_DeleteOnClose);
 	createMenu();
 	createHorizontalGroupBox();
 	createFormGroupBox();
@@ -58,10 +58,14 @@ void RegistrationWindow::createFormGroupBox()
 	formGroupBox = new QGroupBox(tr("Registration: "));
 	login = new QLineEdit;
 	pass = new QLineEdit;
+	confirmPass = new QLineEdit;
+	pass->setEchoMode(QLineEdit::Password);
+	confirmPass->setEchoMode(QLineEdit::Password);
 	
 	QFormLayout *layout = new QFormLayout;
 	layout->addRow(new QLabel(tr("Login: ")), login);
 	layout->addRow(new QLabel(tr("Password: ")), pass);
+	layout->addRow(new QLabel(tr("Confirm password: ")), confirmPass);
 
 	QPushButton *enterButton = new QPushButton(tr("Registration"), this);
 	QPushButton *gotologin = new QPushButton(tr("Return to log-in"), this);
@@ -88,20 +92,26 @@ void RegistrationWindow::createMenu()
 
 void RegistrationWindow::on_enterButton_clicked() 
 {
-	bool isCorrect = sdb->createUser(this->login->text(), this->pass->text());
+	if (this->pass->text() == this->confirmPass->text()) {
 
-	if (!isCorrect) {
-		qDebug() << "Registration is failed! Input correct data!";
+		bool isCorrect = sdb->createUser(this->login->text(), this->pass->text());
+
+		if (!isCorrect) {
+			qDebug() << "Registration is failed! Input correct data!";
+		}
+		else {
+			qDebug() << "Registration is success!";
+		}
+
 	}
 	else {
-		qDebug() << "Registration is success!";
-		//переход на main форму
+		qDebug() << "Incorrect confirm password! Try again!";
 	}
 }
 
 void RegistrationWindow::go_to_loginwindow()
 {
 	this->close();
-	loginwindow = new LoginWindow;
-	loginwindow->show();
+	loginWindow = new LoginWindow;
+	loginWindow->show();
 }

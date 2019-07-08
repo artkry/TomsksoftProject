@@ -26,8 +26,6 @@ private slots:
     void on_enterButton_clicked();
 	void go_to_loginwindow();
 
-
-
 private:
 	void createHorizontalGroupBox();
 	void createMenu();
@@ -38,7 +36,9 @@ private:
 	QGroupBox *formGroupBox;
 	QLineEdit *login;
 	QLineEdit *pass;
-	LoginWindow *loginwindow;
+	QLineEdit *confirmPass;
+
+	LoginWindow *loginWindow;
 	QMenu *fileMenu;
 	QAction *exitAction;
 	DBFasade *sdb;

@@ -1,6 +1,7 @@
 #include "loginwindow.h"
 #include "dbfasade.h"
 #include "registrationwindow.h"
+#include "mainwindow.h"
 
 #include <QGroupBox>
 #include <QFormLayout>
@@ -14,6 +15,7 @@
 
 LoginWindow::LoginWindow()
 {	
+	//setAttribute(Qt::WA_DeleteOnClose);
 	createMenu();
 	createFormGroupBox();
 	createHorizontalGroupBox();
@@ -46,6 +48,7 @@ void LoginWindow::createFormGroupBox()
 	formGroupBox = new QGroupBox(tr("Authorization:"));
 	login = new QLineEdit;
 	pass = new QLineEdit;
+	pass->setEchoMode(QLineEdit::Password);
 
 	QFormLayout *layout = new QFormLayout;
 	layout->addRow(new QLabel(tr("Login: ")), login);
@@ -80,16 +83,17 @@ void LoginWindow::on_enterButton_clicked()
 	}
 	else {
 		qDebug() << "Auth is success!";
-		//переход на main форму
+		this->close();
+		mainWindow = new MainWindow;
+		mainWindow->show();
 	}
 }
 
 void LoginWindow::on_registrButton_clicked()
 {
 	this->close();
-	registrwindow = new RegistrationWindow;
-	registrwindow->show();
-
+	registrWindow = new RegistrationWindow;
+	registrWindow->show();
 }
 
 LoginWindow::~LoginWindow() {
