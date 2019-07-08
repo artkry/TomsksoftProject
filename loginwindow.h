@@ -12,6 +12,7 @@ class QTextEdit;
 class QMenu;
 class QMenuBar;
 class DBFasade;
+class RegistrationWindow;
 
 class LoginWindow : public QDialog
 {
@@ -25,6 +26,7 @@ private slots:
     void on_enterButton_clicked();
 	void on_registrButton_clicked();
 
+
 private:
 	void createFormGroupBox();
 	void createMenu();
@@ -35,6 +37,7 @@ private:
 	QGroupBox *horizontalGroupBox;
 	QLineEdit *login;
 	QLineEdit *pass;
+	RegistrationWindow *registrwindow;
 
 	QMenu *fileMenu;
 	QAction *exitAction;

@@ -38,7 +38,8 @@ DBFasade::~DBFasade()
 {
 	delete query;
 	delete &rec;
-	delete &sdb;
+	sdb.close();
+	sdb.removeDatabase(sdb.connectionName());
 }
 
 
@@ -75,8 +76,9 @@ bool DBFasade::createUser(QString login, QString pass)
 {
 	query->clear();
 	bool isCorrect;
-	QString str = "INSERT INTO Users (profile_name, passwd) VALUES ("+ login + "," + pass +");";
-	
+	QString str_ = "INSERT INTO Users (profile_name, passwd) VALUES ('%1','%2');";
+	QString str = str_.arg(login).arg(pass);
+
 	isCorrect = query->exec(str);
 
 	if (!isCorrect) {

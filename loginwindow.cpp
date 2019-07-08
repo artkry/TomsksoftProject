@@ -13,7 +13,7 @@
 #include <QMenu>
 
 LoginWindow::LoginWindow()
-{
+{	
 	createMenu();
 	createFormGroupBox();
 	createHorizontalGroupBox();
@@ -86,12 +86,15 @@ void LoginWindow::on_enterButton_clicked()
 
 void LoginWindow::on_registrButton_clicked()
 {
-	RegistrationWindow registrwindow;
-	registrwindow.show();
-	this->hide();
+	this->close();
+	registrwindow = new RegistrationWindow;
+	registrwindow->show();
+
 }
 
 LoginWindow::~LoginWindow() {
+	
+	
 	delete sdb;
 
 	delete menuBar;

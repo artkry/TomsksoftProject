@@ -14,6 +14,7 @@
 
 RegistrationWindow::RegistrationWindow()
 {
+	
 	createMenu();
 	createHorizontalGroupBox();
 	createFormGroupBox();
@@ -63,8 +64,11 @@ void RegistrationWindow::createFormGroupBox()
 	layout->addRow(new QLabel(tr("Password: ")), pass);
 
 	QPushButton *enterButton = new QPushButton(tr("Registration"), this);
+	QPushButton *gotologin = new QPushButton(tr("Return to log-in"), this);
 	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
+	connect(gotologin, SIGNAL(clicked()), this, SLOT(go_to_loginwindow()));
 	layout->addWidget(enterButton);
+	layout->addWidget(gotologin);
 
 	formGroupBox->setLayout(layout);
 
@@ -91,12 +95,13 @@ void RegistrationWindow::on_enterButton_clicked()
 	}
 	else {
 		qDebug() << "Registration is success!";
-		//connect(isCorrect, SIGNAL(true), this, SLOT(go_to_loginwindow()));
-		LoginWindow loginwindow;
-		loginwindow.show();
-		this->hide();
+		//переход на main форму
 	}
 }
 
 void RegistrationWindow::go_to_loginwindow()
-{}
+{
+	this->close();
+	loginwindow = new LoginWindow;
+	loginwindow->show();
+}
