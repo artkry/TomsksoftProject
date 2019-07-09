@@ -2,13 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QDialog>
+#include <QDate>
 
 class QAction;
-class QDialogButtonBox;
 class QMenu;
 class QMenuBar;
 class QPushButton;
-class DBFasade;
+class QTextBrowser;
+class QGroupBox;
+class ModalMainWindow;
 
 class MainWindow : public QDialog
 {
@@ -18,21 +20,26 @@ public:
 	MainWindow();
 	~MainWindow();
 
+public slots:
+	void changeMonth(QDate date);
+	void pushChanges();
+	void pullChanges();
+	void makeChanges();
+
 private:
 	void createMenu();
+	void createHorizontalGroupBox();
+	void createHorizontalButtonBox();
+	void calendar();
 
-	enum {January = 31, February = 28, 
-	      March = 31, April = 30, May = 31,
-	      June = 30, July = 31, August = 31,
-	      September = 30, October = 31,
-	      November = 30, December = 31};
+	QDate selectedDate;
+	QTextBrowser *editor;
+	QGroupBox *horizontalGroupBox;
+	QGroupBox *horizontalButtonBox;
 
+	
 	QMenuBar *menuBar;
-	QDialogButtonBox *buttonBox;
-
 	QMenu *fileMenu;
 	QAction *exitAction;
 };
-
-
 #endif // !MAINWINDOW_H

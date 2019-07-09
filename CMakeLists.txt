@@ -8,14 +8,16 @@ set(PROJECT_HEADERS
     mainwindow.h
     loginwindow.h
     dbfasade.h
-    registrationwindow.h)
+    registrationwindow.h
+    modalmainwindow.h)
 
 set(PROJECT_SOURCES 
     main.cpp
     mainwindow.cpp
     loginwindow.cpp
     dbfasade.cpp
-    registrationwindow.cpp)
+    registrationwindow.cpp
+    modalmainwindow.cpp)
 
 qt5_wrap_cpp(PROJECT_SOURCES_MOC ${PROJECT_HEADERS})
 

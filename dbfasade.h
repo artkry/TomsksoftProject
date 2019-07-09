@@ -24,5 +24,6 @@ protected:
 	QSqlDatabase sdb;
 	QSqlQuery *query;
 	QSqlRecord rec;
+	QString authLogin;
 };
 #endif // !DBFASADE_H

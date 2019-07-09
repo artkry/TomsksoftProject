@@ -65,6 +65,7 @@ bool DBFasade::authRequest(QString login, QString pass)
 
 	if (query->value(rec.indexOf("passwd")).toString() == pass) {
 		return true;
+		authLogin = login;
 	}
 	else {
 		qDebug() << "Incorrect pass! (DBFasade authRequest)";

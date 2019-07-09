@@ -15,6 +15,7 @@
 RegistrationWindow::RegistrationWindow()
 {
 	//setAttribute(Qt::WA_DeleteOnClose);
+	this->setGeometry(300, 100, 500, 500);
 	createMenu();
 	createHorizontalGroupBox();
 	createFormGroupBox();
