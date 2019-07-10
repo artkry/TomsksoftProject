@@ -1,5 +1,7 @@
 #include "loginwindow.h"
-#include "database.h"
+#include "dbfasade.h"
+#include "registrationwindow.h"
+#include "mainwindow.h"
 
 #include <QGroupBox>
 #include <QFormLayout>
@@ -12,10 +14,14 @@
 #include <QMenu>
 
 LoginWindow::LoginWindow()
-{
+{	
+	//setAttribute(Qt::WA_DeleteOnClose);
+	this->setGeometry(300, 100, 500, 500);
 	createMenu();
 	createFormGroupBox();
 	createHorizontalGroupBox();
+
+	sdb = new DBFasade;
 
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->setMenuBar(menuBar);
@@ -42,16 +48,20 @@ void LoginWindow::createFormGroupBox()
 {
 	formGroupBox = new QGroupBox(tr("Authorization:"));
 	login = new QLineEdit;
-	password = new QLineEdit;
+	pass = new QLineEdit;
+	pass->setEchoMode(QLineEdit::Password);
 
 	QFormLayout *layout = new QFormLayout;
 	layout->addRow(new QLabel(tr("Login: ")), login);
-	layout->addRow(new QLabel(tr("Password: ")), password);
+	layout->addRow(new QLabel(tr("Password: ")), pass);
 
 	QPushButton *enterButton = new QPushButton(tr("Sign-IN"), this);
+	QPushButton *registrButton = new QPushButton(tr("Create new User"), this);
 	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
+	connect(registrButton, SIGNAL(clicked()), this, SLOT(on_registrButton_clicked()));
 	//enterButton->setGeometry(QRect(QPoint(100, 100), QSize(200, 50)));
 	layout->addWidget(enterButton);
+	layout->addWidget(registrButton);
 
 	formGroupBox->setLayout(layout);
 }
@@ -67,47 +77,36 @@ void LoginWindow::createHorizontalGroupBox()
 
 void LoginWindow::on_enterButton_clicked()
 {
-	//все qDebug выводы только для информативности в debug консоле
-	QString log = this->login->text();
-	QString pass = this->password->text();
+	bool isCorrect = sdb->authRequest(this->login->text(), this->pass->text());
 
-	database = new Database;
-
-	QSqlQuery a_query(database->sdb);
-	QString str;
-	bool isCorrect;
-
-	QString str_ = "SELECT passwd FROM Users WHERE Users.profile_name LIKE '%1';";
-	str = str_.arg(log);
-
-	isCorrect = a_query.exec(str);
 	if (!isCorrect) {
-		qDebug() << "Request not completed!";
+		qDebug() << "Auth is failed! Input correct data!";
 	}
 	else {
-		qDebug() << "Request complited!";
-	}
-	
-	QSqlRecord rec = a_query.record();
-	QString pw = "";
-
-	while (a_query.next()) {
-		pw = a_query.value(rec.indexOf("passwd")).toString();
-	}
-
-	if (pass != pw) {
-		qDebug() << "Incorrect password, pls try again!";
-	}
-	else {
-		//некорректно с pw, доработать
-		if (pw == "") {
-			qDebug() << "Profile with this name isn't exists";
-		}
-		else {
-			qDebug() << "Success!";
-			//вызов коннекта на основную форму, авторизация прошла
-		}
+		qDebug() << "Auth is success!";
+		this->close();
+		mainWindow = new MainWindow;
+		mainWindow->show();
 	}
 }
 
-LoginWindow::~LoginWindow() {}
+void LoginWindow::on_registrButton_clicked()
+{
+	this->close();
+	registrWindow = new RegistrationWindow;
+	registrWindow->show();
+}
+
+LoginWindow::~LoginWindow() {
+	
+	
+	delete sdb;
+
+	delete menuBar;
+	delete formGroupBox;
+	delete horizontalGroupBox;
+	delete login;
+	delete pass;
+	delete fileMenu;
+	delete exitAction;
+}
