@@ -37,7 +37,7 @@ private:
 	QTextBrowser *editor;
 	QGroupBox *horizontalGroupBox;
 	QGroupBox *horizontalButtonBox;
-
+	QGroupBox *calendarGridGroupBox;
 	
 	QMenuBar *menuBar;
 	QMenu *fileMenu;

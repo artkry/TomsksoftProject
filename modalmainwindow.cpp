@@ -32,13 +32,13 @@ void ModalMainWindow::createFormGroupBox()
 	QFormLayout *layout = new QFormLayout;
 
 	longDate = new QLineEdit;
-	date = new QLineEdit;
+	//date = new QLineEdit;
 	inComing = new QLineEdit;
 	expense = new QLineEdit;
 	surPlus = new QLineEdit;
 
 	layout->addRow(new QLabel(tr("How many days?: ")), longDate);
-	layout->addRow(new QLabel(tr("Date: ")), date);
+	//layout->addRow(new QLabel(tr("Date: ")), date);
 	layout->addRow(new QLabel(tr("Prihod: ")), inComing);
 	layout->addRow(new QLabel(tr("Rashod: ")), expense);
 	layout->addRow(new QLabel(tr("Ostatok: ")), surPlus);

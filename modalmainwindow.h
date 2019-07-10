@@ -24,7 +24,7 @@ private:
 	void createHorizontalGroupBox();
 
 	QLineEdit *longDate;
-	QLineEdit *date;
+	//QLineEdit *date;
 	QLineEdit *inComing;
 	QLineEdit *expense;
 	QLineEdit *surPlus;

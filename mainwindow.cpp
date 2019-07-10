@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include "modalmainwindow.h"
+#include "daywidget.h"
 
 #include <QVBoxLayout>
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <QLabel>
 #include <QTextBrowser>
 #include <QGroupBox>
 #include <QPushButton>
@@ -21,12 +23,14 @@ MainWindow::MainWindow()
 	createHorizontalButtonBox();
 
 	editor = new QTextBrowser;
-	calendar();
-
+	//calendar();
+	calendar1();
+	
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->setMenuBar(menuBar);
 	mainLayout->addWidget(horizontalGroupBox);
-	mainLayout->addWidget(editor, 1);
+	//mainLayout->addWidget(editor, 1);
+	mainLayout->addWidget(calendarGridGroupBox);
 	mainLayout->addWidget(horizontalButtonBox);
 	setLayout(mainLayout);
 
@@ -148,7 +152,18 @@ void MainWindow::calendar()
 
 void MainWindow::calendar1()
 {
+	QDate date(selectedDate.year(), selectedDate.month(), 1);
 
+	QVBoxLayout *mainlayout = new QVBoxLayout;
+	calendarGridGroupBox = new QGroupBox;
+	QGridLayout *weekDayLayout = new QGridLayout;
+
+	for(int weekDay = 0; weekDay < 7; ++weekDay){
+		QLabel *weekDayName = new QLabel(QString("%1").arg(QDate::longDayName(weekDay + 1)));
+		weekDayLayout->addWidget(weekDayName, 0, weekDay, Qt::AlignCenter);
+	}
+
+	calendarGridGroupBox->setLayout(weekDayLayout);
 }
 
 void MainWindow::changeMonth(QDate date)
