@@ -10,7 +10,7 @@ class QMenuBar;
 class QPushButton;
 class QTextBrowser;
 class QGroupBox;
-class ModalMainWindow;
+class QVBoxLayout;
 
 class MainWindow : public QDialog
 {
@@ -35,6 +35,7 @@ private:
 
 	QDate selectedDate;
 	QTextBrowser *editor;
+	QVBoxLayout *windowLayout;
 	QGroupBox *horizontalGroupBox;
 	QGroupBox *horizontalButtonBox;
 	QGroupBox *calendarGridGroupBox;

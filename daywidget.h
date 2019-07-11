@@ -1,43 +1,42 @@
-//#ifndef DAYWIDGET_H
-//#define DAYWIDGET_H
+#ifndef DAYWIDGET_H
+#define DAYWIDGET_H
 
-//#include <QLabel>
+#include <QWidget>
+#include <QDate>
 
 //class QLabel;
-//class QDate;
-//class QGroupBox;
+class QGroupBox;
 
-//class DayWidget : public QLabel
-//{
-	//Q_OBJECT
-//public:
-	//DayWidget(QDate date_, double inComing_ = 0.0, double expense_ = 0.0, double surPlus_ = 0.0);
-	//~DayWidget();
+class DayWidget : public QWidget
+{
+	Q_OBJECT
+public:
+	DayWidget(QDate date_, double inComing_, double expense_, double surPlus_);
+	~DayWidget();
 
-//signals:
-	//void clicked();
+signals:
+	void clicked();
 
-//protected:
-	//void mousePressEvent(QMouseEvent *event);
-	//void createFormGroupBox();
+protected:
+	void mousePressEvent(QMouseEvent *event);
+	void createFormGroupBox();
 
-	//void setDate(QDate date_);
-	//void setInComing(double inComing_);
-	//void setExpense(double expense_);
-	//void setSurPlus(double surPlus_);
+	void setDate(QDate date_);
+	void setInComing(double inComing_ = 0.0);
+	void setExpense(double expense_ = 0.0);
+	void setSurPlus(double surPlus_ = 0.0);
 	
-	//QDate getDate() const;
-	//double getInComing() const;
-	//double getExpense() const;
-	//double getSurPlus() const;
+	QDate getDate() const;
+	double getInComing() const;
+	double getExpense() const;
+	double getSurPlus() const;
 
-	//QDate date;
+	QDate date;
 
-    //double inComing;
-	//double expense;
-	//double surPlus;
+    double inComing;
+	double expense;
+	double surPlus;
 
-	//QGroupBox *formGroupBox;
-
-//};
-//#endif // !DAYWIDGET_H
+	QGroupBox *formGroupBox;
+};
+#endif // !DAYWIDGET_H

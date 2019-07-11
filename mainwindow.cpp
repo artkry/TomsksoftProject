@@ -15,7 +15,7 @@
 
 MainWindow::MainWindow()
 {
-	this->setGeometry(300, 100, 800, 500);
+	this->setGeometry(300, 100, 800, 600);
 	selectedDate = QDate::currentDate();
 
 	createMenu();
@@ -26,13 +26,13 @@ MainWindow::MainWindow()
 	//calendar();
 	calendar1();
 	
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainLayout->setMenuBar(menuBar);
-	mainLayout->addWidget(horizontalGroupBox);
+	windowLayout = new QVBoxLayout;
+	windowLayout->setMenuBar(menuBar);
+	windowLayout->addWidget(horizontalGroupBox);
 	//mainLayout->addWidget(editor, 1);
-	mainLayout->addWidget(calendarGridGroupBox);
-	mainLayout->addWidget(horizontalButtonBox);
-	setLayout(mainLayout);
+	windowLayout->addWidget(calendarGridGroupBox);
+	windowLayout->addWidget(horizontalButtonBox);
+	setLayout(windowLayout);
 
 	setWindowTitle(tr("Home Accounting"));
 }
@@ -79,7 +79,7 @@ void MainWindow::createHorizontalButtonBox()
 	QPushButton *pull = new QPushButton(tr("Pull Data"));
 	QPushButton *push = new QPushButton(tr("Push Data"));
 
-	connect(change, SIGNAL(clicked()), this, SLOT(makeChanges()));
+	//connect(change, SIGNAL(clicked()), this, SLOT(makeChanges()));
 	//connect(pull, SIGNAL(clicked()), this, SLOT(pullChanges()));
 	//connect(push, SIGNAL(clicked()), this, SLOT(pushChanges()));
 
@@ -154,22 +154,49 @@ void MainWindow::calendar1()
 {
 	QDate date(selectedDate.year(), selectedDate.month(), 1);
 
-	QVBoxLayout *mainlayout = new QVBoxLayout;
 	calendarGridGroupBox = new QGroupBox;
-	QGridLayout *weekDayLayout = new QGridLayout;
-
+	QGridLayout *mainLayout = new QGridLayout;
+	//mainLayout->setSpacing(0);
+	//дни недели
 	for(int weekDay = 0; weekDay < 7; ++weekDay){
 		QLabel *weekDayName = new QLabel(QString("%1").arg(QDate::longDayName(weekDay + 1)));
-		weekDayLayout->addWidget(weekDayName, 0, weekDay, Qt::AlignCenter);
+		mainLayout->addWidget(weekDayName, 0, weekDay);
 	}
 
-	calendarGridGroupBox->setLayout(weekDayLayout);
+	
+	//недели
+	int weekNum = 1;
+	while (date.month() == selectedDate.month()) {
+		int weekDay = date.dayOfWeek();
+		DayWidget *day = new DayWidget(date, 0.0, 0.0, 0.0);
+		connect(day, SIGNAL(clicked()), this, SLOT(makeChanges()));
+		mainLayout->addWidget(day, weekNum, weekDay - 1);
+		date = date.addDays(1);
+		if (weekDay == 7 && date.month() == selectedDate.month()) {
+			weekNum++;
+		}
+	}
+	//mainLayout->setVerticalSpacing(0);
+	//mainLayout->setHorizontalSpacing(0);
+	calendarGridGroupBox->setLayout(mainLayout);
 }
 
 void MainWindow::changeMonth(QDate date)
 {
-	selectedDate = QDate(selectedDate.year(), date.month(), selectedDate.day());
-	calendar();
+	selectedDate = QDate(date.year(), date.month(), selectedDate.day());
+	QLayoutItem *item;
+	while ((item = windowLayout->itemAt(2))) {
+		windowLayout->removeItem(item);
+		windowLayout->removeWidget(item->widget());
+		delete item->widget();
+		delete item;
+		windowLayout->update();
+	}
+	//windowLayout->removeWidget(calendarGridGroupBox);
+	//delete calendarGridGroupBox;
+	calendar1();
+	//windowLayout->removeWidget(calendarGridGroupBox);
+	windowLayout->insertWidget(1, calendarGridGroupBox);
 }
 
 void MainWindow::makeChanges() 
