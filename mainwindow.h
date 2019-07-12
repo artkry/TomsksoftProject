@@ -11,6 +11,7 @@ class QPushButton;
 class QTextBrowser;
 class QGroupBox;
 class QVBoxLayout;
+class DBFasade;
 
 class MainWindow : public QDialog
 {
@@ -43,5 +44,7 @@ private:
 	QMenuBar *menuBar;
 	QMenu *fileMenu;
 	QAction *exitAction;
+
+	DBFasade *sdb;
 };
 #endif // !MAINWINDOW_H

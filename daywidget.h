@@ -2,17 +2,25 @@
 #define DAYWIDGET_H
 
 #include <QWidget>
-#include <QDate>
+//#include <QDate>
 
-//class QLabel;
 class QGroupBox;
+class DBFasade;
 
 class DayWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	DayWidget(QDate date_, double inComing_, double expense_, double surPlus_);
+	DayWidget(QString date_, double inComing_, double expense_, double surPlus_);
 	~DayWidget();
+
+	QString getDate() const;
+	void setInComing(double inComing_ = 0.0);
+	void setExpense(double expense_ = 0.0);
+	void setSurPlus(double surPlus_ = 0.0);
+	double getInComing() const;
+	double getExpense() const;
+	double getSurPlus() const;
 
 signals:
 	void clicked();
@@ -21,21 +29,12 @@ protected:
 	void mousePressEvent(QMouseEvent *event);
 	void createFormGroupBox();
 
-	void setDate(QDate date_);
-	void setInComing(double inComing_ = 0.0);
-	void setExpense(double expense_ = 0.0);
-	void setSurPlus(double surPlus_ = 0.0);
-	
-	QDate getDate() const;
-	double getInComing() const;
-	double getExpense() const;
-	double getSurPlus() const;
+	void setDate(QString date_);
 
-	QDate date;
-
-    double inComing;
-	double expense;
-	double surPlus;
+	QString date;
+	mutable double inComing;
+	mutable double expense;
+	mutable double surPlus;
 
 	QGroupBox *formGroupBox;
 };

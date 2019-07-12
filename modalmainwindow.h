@@ -16,6 +16,9 @@ public:
 	ModalMainWindow(QDialog *parent = 0);
 	~ModalMainWindow();
 
+private slots:
+    void on_push_button_clicked();
+
 signals:
 	void applied();
 
@@ -24,7 +27,6 @@ private:
 	void createHorizontalGroupBox();
 
 	QLineEdit *longDate;
-	//QLineEdit *date;
 	QLineEdit *inComing;
 	QLineEdit *expense;
 	QLineEdit *surPlus;

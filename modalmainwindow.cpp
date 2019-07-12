@@ -64,3 +64,5 @@ void ModalMainWindow::createHorizontalGroupBox()
 
 	horizontalGroupBox->setLayout(layout);
 }
+
+void ModalMainWindow::on_push_button_clicked() {}

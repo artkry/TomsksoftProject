@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "modalmainwindow.h"
 #include "daywidget.h"
+#include "dbfasade.h"
 
 #include <QVBoxLayout>
 #include <QMenuBar>
@@ -16,11 +17,22 @@
 MainWindow::MainWindow()
 {
 	this->setGeometry(300, 100, 800, 600);
+	sdb = new DBFasade;
+
 	selectedDate = QDate::currentDate();
 
 	createMenu();
 	createHorizontalGroupBox();
 	createHorizontalButtonBox();
+
+	bool isCorrect = sdb->pullUserData();
+
+	if (isCorrect) {
+		qDebug() << "request ok (mainwdw)";
+	}
+	else {
+		qDebug() << "bad request (mainwdw)";
+	}
 
 	editor = new QTextBrowser;
 	//calendar();
@@ -168,7 +180,8 @@ void MainWindow::calendar1()
 	int weekNum = 1;
 	while (date.month() == selectedDate.month()) {
 		int weekDay = date.dayOfWeek();
-		DayWidget *day = new DayWidget(date, 0.0, 0.0, 0.0);
+		DayWidget *day = new DayWidget(date.toString("dd.MM.yyyy"), 0.0, 0.0, 0.0);
+		sdb->fillDayWidgetFromBufer(*day);
 		connect(day, SIGNAL(clicked()), this, SLOT(makeChanges()));
 		mainLayout->addWidget(day, weekNum, weekDay - 1);
 		date = date.addDays(1);
@@ -197,6 +210,7 @@ void MainWindow::changeMonth(QDate date)
 	calendar1();
 	//windowLayout->removeWidget(calendarGridGroupBox);
 	windowLayout->insertWidget(1, calendarGridGroupBox);
+	windowLayout->update();
 }
 
 void MainWindow::makeChanges() 
