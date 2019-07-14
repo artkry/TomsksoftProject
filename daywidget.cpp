@@ -8,16 +8,17 @@
 
 DayWidget::DayWidget(QString date_, double inComing_, double expense_, double surPlus_)
 {
-	setInComing(inComing_);
-	setExpense(expense_);
-	setSurPlus(surPlus_);
 	setDate(date_);
+
+	this->inComing = inComing_;
+	this->expense = expense_;
+	this->surPlus = surPlus_;
 
 	createFormGroupBox();
 
-	QVBoxLayout *mainlayout = new QVBoxLayout;
-	mainlayout->addWidget(formGroupBox);
-	setLayout(mainlayout);
+	mainLayout = new QVBoxLayout;
+	mainLayout->addWidget(formGroupBox);
+	setLayout(mainLayout);
 }
 
 DayWidget::~DayWidget() 
@@ -47,14 +48,45 @@ void DayWidget::createFormGroupBox()
 	formGroupBox->setLayout(layout);
 }
 
-void DayWidget::mousePressEvent(QMouseEvent *event) { emit clicked(); }
+void DayWidget::mousePressEvent(QMouseEvent *event) { emit clicked(this->date); }
 
 void DayWidget::setDate(QString date_) { this->date = date_; }
-void DayWidget::setInComing(double inComing_) { this->inComing = inComing_; }
-void DayWidget::setExpense(double expense_) { this->expense = expense_; }
-void DayWidget::setSurPlus(double surPlus_) { this->surPlus = surPlus_; }
+
+void DayWidget::setInComing(double inComing_) 
+{ 
+	this->inComing = inComing_;
+	mainLayout->removeWidget(formGroupBox);
+	delete formGroupBox;
+	mainLayout->update();
+	createFormGroupBox();
+	mainLayout->insertWidget(0, formGroupBox);
+	mainLayout->update();
+}
+
+void DayWidget::setExpense(double expense_) 
+{ 
+	this->expense = expense_; 
+	mainLayout->removeWidget(formGroupBox);
+	delete formGroupBox;
+	mainLayout->update();
+	createFormGroupBox();
+	mainLayout->insertWidget(0, formGroupBox);
+	mainLayout->update();
+}
+
+void DayWidget::setSurPlus(double surPlus_) 
+{ 
+	this->surPlus = surPlus_; 
+	mainLayout->removeWidget(formGroupBox);
+	delete formGroupBox;
+	mainLayout->update();
+	createFormGroupBox();
+	mainLayout->insertWidget(0, formGroupBox);
+	mainLayout->update();
+}
 
 QString DayWidget::getDate() const { return this->date; }
 double DayWidget::getInComing() const { return this->inComing; }
 double DayWidget::getExpense() const { return this->expense; }
 double DayWidget::getSurPlus() const { return this->surPlus; }
+

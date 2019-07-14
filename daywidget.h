@@ -6,6 +6,7 @@
 
 class QGroupBox;
 class DBFasade;
+class QVBoxLayout;
 
 class DayWidget : public QWidget
 {
@@ -15,15 +16,15 @@ public:
 	~DayWidget();
 
 	QString getDate() const;
-	void setInComing(double inComing_ = 0.0);
-	void setExpense(double expense_ = 0.0);
-	void setSurPlus(double surPlus_ = 0.0);
+	void setInComing(double inComing_);
+	void setExpense(double expense_);
+	void setSurPlus(double surPlus_);
 	double getInComing() const;
 	double getExpense() const;
 	double getSurPlus() const;
 
 signals:
-	void clicked();
+	void clicked(QString date_);
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
@@ -32,10 +33,11 @@ protected:
 	void setDate(QString date_);
 
 	QString date;
-	mutable double inComing;
-	mutable double expense;
-	mutable double surPlus;
+	double inComing;
+	double expense;
+	double surPlus;
 
 	QGroupBox *formGroupBox;
+	QVBoxLayout *mainLayout;
 };
 #endif // !DAYWIDGET_H

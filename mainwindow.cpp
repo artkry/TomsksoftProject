@@ -182,7 +182,12 @@ void MainWindow::calendar1()
 		int weekDay = date.dayOfWeek();
 		DayWidget *day = new DayWidget(date.toString("dd.MM.yyyy"), 0.0, 0.0, 0.0);
 		sdb->fillDayWidgetFromBufer(*day);
-		connect(day, SIGNAL(clicked()), this, SLOT(makeChanges()));
+	
+		qDebug() << day->getDate() << "m";
+		qDebug() << day->getInComing() << "m";
+		qDebug() << day->getExpense() << "m";
+		qDebug() << day->getSurPlus() << "m";
+		connect(day, SIGNAL(clicked(QString)), this, SLOT(makeChanges(QString)));
 		mainLayout->addWidget(day, weekNum, weekDay - 1);
 		date = date.addDays(1);
 		if (weekDay == 7 && date.month() == selectedDate.month()) {
@@ -213,10 +218,13 @@ void MainWindow::changeMonth(QDate date)
 	windowLayout->update();
 }
 
-void MainWindow::makeChanges() 
+void MainWindow::makeChanges(QString date_) 
 {
+	//QString date_ = date.toString("dd.MM.yyyy");
+	qDebug() << date_;
+	
 	ModalMainWindow modalmainwindow(this);
-	connect(&modalmainwindow, SIGNAL(applied()), SLOT(onApplied()));
+	//connect(&modalmainwindow, SIGNAL(applied()), SLOT(onApplied()));
 	switch (modalmainwindow.exec())
 	{
 	case QDialog::Rejected:
@@ -224,7 +232,9 @@ void MainWindow::makeChanges()
 		break;
 	case QDialog::Accepted:
 		//qDebug() << "acccept changes";
-		//здесь вывывается bufer для расчетов
+		sdb->calculateChanges(date_, modalmainwindow.getInComing(),
+			modalmainwindow.getExpense(), modalmainwindow.getSurPlus());
+		calendar1();
 		break;
 	default:
 		break;

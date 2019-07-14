@@ -25,7 +25,7 @@ public slots:
 	void changeMonth(QDate date);
 	void pushChanges();
 	void pullChanges();
-	void makeChanges();
+	void makeChanges(QString date_);
 
 private:
 	void createMenu();

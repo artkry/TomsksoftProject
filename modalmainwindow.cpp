@@ -31,13 +31,11 @@ void ModalMainWindow::createFormGroupBox()
 
 	QFormLayout *layout = new QFormLayout;
 
-	longDate = new QLineEdit;
 	//date = new QLineEdit;
 	inComing = new QLineEdit;
 	expense = new QLineEdit;
 	surPlus = new QLineEdit;
 
-	layout->addRow(new QLabel(tr("How many days?: ")), longDate);
 	//layout->addRow(new QLabel(tr("Date: ")), date);
 	layout->addRow(new QLabel(tr("Prihod: ")), inComing);
 	layout->addRow(new QLabel(tr("Rashod: ")), expense);
@@ -55,7 +53,7 @@ void ModalMainWindow::createHorizontalGroupBox()
 	declineButton = new QPushButton(tr("Decline"));
 
 
-	//connect(acceptButton, SIGNAL(clicked()), this, SLOT());
+	connect(acceptButton, SIGNAL(clicked()), this, SLOT(accept()));
 	connect(declineButton, SIGNAL(clicked()), this, SLOT(reject()));
 
 	layout->addWidget(declineButton);
@@ -66,3 +64,9 @@ void ModalMainWindow::createHorizontalGroupBox()
 }
 
 void ModalMainWindow::on_push_button_clicked() {}
+
+double ModalMainWindow::getInComing() const { return this->inComing->text().toDouble(); }
+
+double ModalMainWindow::getExpense() const { return this->expense->text().toDouble(); }
+
+double ModalMainWindow::getSurPlus() const { return this->surPlus->text().toDouble(); }

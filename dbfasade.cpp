@@ -2,6 +2,7 @@
 #include "daywidget.h"
 
 int DBFasade::authId = 0;
+int DBFasade::calcTime = 31;
 
 DBFasade::DBFasade()
 {
@@ -148,7 +149,7 @@ bool DBFasade::pullUserData()
 
 	//кидаем данные в буфер
 	rec = query->record();
-	int itter = 0;
+	//int itter = 0;
 	QString dtimeQ = "";
 	double incomingQ = 0.0;
 	double expenseQ = 0.0;
@@ -161,15 +162,12 @@ bool DBFasade::pullUserData()
 		surplusQ = query->value(rec.indexOf("surplus")).toDouble();
 
 		qDebug() << "cicle";
-		qDebug() << itter;
 		qDebug() << dtimeQ;
 		qDebug() << incomingQ;
 		qDebug() << expenseQ;
 		qDebug() << surplusQ;
 
-		fillBufer(incomingQ, expenseQ, surplusQ, dtimeQ, itter);
-		
-		itter++;
+		fillBufer(incomingQ, expenseQ, surplusQ, dtimeQ);
 	}
 
 	return true;
@@ -197,24 +195,27 @@ bool DBFasade::pushUserData(double inComing_, double expense_, double surPlus_, 
 
 }
 
-void DBFasade::fillBufer(double inComing_, double expense_, double surPlus_, QString date_, int itter)
+void DBFasade::fillBufer(double inComing_, double expense_, double surPlus_, QString date_)
 {
+	//переделать, убрать itter, добавлять заполненную структуру в конец списка
+	//т.к. последовательно при генерации календаря сохраняется
 	dateBufer item;
+	item.date = date_;
+	item.inComingB = inComing_;
+	item.expenseB = expense_;
+	item.surPlusB = surPlus_;
+	
 	bufer.append(item);
 
-	bufer[itter].date = date_;
-	bufer[itter].inComingB = inComing_;
-	bufer[itter].expenseB = expense_;
-	bufer[itter].surPlusB = surPlus_;
+	//bufer[itter].date = date_;
+	//bufer[itter].inComingB = inComing_;
+	//bufer[itter].expenseB = expense_;
+	//bufer[itter].surPlusB = surPlus_;
 
-	qDebug() << "№: " << itter
-		<< "date: " << bufer[itter].date
-		<< "inc: " << bufer[itter].inComingB
-		<< "exp: " << bufer[itter].expenseB
-		<< "sur: " << bufer[itter].surPlusB;
+
 }
 
-DayWidget DBFasade::fillDayWidgetFromBufer(DayWidget &day)
+void DBFasade::fillDayWidgetFromBufer(DayWidget &day)
 {
 	QList<dateBufer>::iterator count;
 
@@ -231,4 +232,92 @@ DayWidget DBFasade::fillDayWidgetFromBufer(DayWidget &day)
 		}
 	}
 	qDebug() << "close func";
+}
+
+void DBFasade::calculateChanges(QString date_, double inComing_, double expense_, double surPlus_)
+{
+	QList<dateBufer>::iterator count;
+	int itter = 0;
+
+	QString currentDate = date_;
+	int currentIndex = 0;
+
+	for (count = bufer.begin(); count != bufer.end(); ++count) {
+		if (count->date == date_) {
+			count->inComingB += inComing_;
+			count->expenseB += expense_;
+			//count->surPlusB += surPlus_;
+
+			if (surPlus_ == 0) {
+				count->surPlusB = count->surPlusB + count->inComingB - count->expenseB;
+			}
+			else { count->surPlusB == surPlus_; }
+			
+			itter = count - bufer.begin();
+			qDebug() << "have this data1 " << date_ << " itter1 " << itter;
+			qDebug() << "incom1 " << count->inComingB <<
+				"exp1 " << count->expenseB << "sur1 " << count->surPlusB;
+			break;
+		}
+	}
+
+	if (itter == 0) {
+		dateBufer item;
+		item.date = currentDate;
+		item.inComingB = inComing_;
+		item.expenseB = expense_;
+
+		if (surPlus_ == 0.0) {
+			item.surPlusB = item.inComingB - item.expenseB;
+		}
+		else { item.surPlusB = surPlus_; }
+		bufer.append(item);
+
+		itter = bufer.size() - 1;
+		qDebug() << "havent this data2 " << "  itter2 " << itter;
+		qDebug() << "inc2 " << item.inComingB << "exp2 " << item.expenseB << "sur2 " << item.surPlusB;
+	}
+
+	for (int i = 0; i < calcTime - 1; i++) {
+		currentIndex = itter;
+		currentDate = addStringDay(currentDate);
+		qDebug() << "currentDate " << currentDate;
+		qDebug() << "currentIndex " << currentIndex;
+		QList<dateBufer>::iterator count;
+		for (count = bufer.begin(); count != bufer.end(); ++count) {
+			if (count->date == currentDate) {
+				//count->inComingB += bufer[currentIndex].surPlusB;
+				//count->expenseB += 0.0;
+				//count->surPlusB += count->inComingB - count->expenseB;
+				count->surPlusB = bufer[currentIndex].surPlusB + count->inComingB - count->expenseB;
+				itter = count - bufer.begin();
+				qDebug() << "have this data3 " << currentDate << "  itter3 " << itter;
+				qDebug() << "incom2 " << count->inComingB <<
+					"exp2 " << count->expenseB << "sur2 " << count->surPlusB;
+				break;
+			}
+		}
+
+		if (currentIndex == itter) {
+			dateBufer item;
+			item.date = currentDate;
+			//item.inComingB = bufer[currentIndex].surPlusB;
+			item.inComingB = 0.0;
+			item.expenseB = 0.0;
+			//item.surPlusB = item.inComingB - item.expenseB;
+			item.surPlusB = bufer[currentIndex].surPlusB;
+
+			bufer.append(item);
+			itter = bufer.size() - 1;
+			qDebug() << "havent this data 4  " << "  itter4  " << itter;
+			qDebug() << "inc4 " << item.inComingB << "exp4 " << item.expenseB << "sur4 " << item.surPlusB;
+		}
+	}
+}
+
+QString DBFasade::addStringDay(QString date_)
+{
+	QDate date = QDate::fromString(date_, "dd.MM.yyyy");
+	date = date.addDays(1);
+	return date.toString("dd.MM.yyyy");
 }

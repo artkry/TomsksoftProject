@@ -19,10 +19,12 @@ public:
 	bool isCreated(QString login);
 	bool pullUserData();
 	bool pushUserData(double inComing_, double expense_, double surPlus_, QString date_);
-	DayWidget fillDayWidgetFromBufer(DayWidget &day);
+	void fillDayWidgetFromBufer(DayWidget &day);
+	void calculateChanges(QString date_, double inComing_, double expense_, double surPlus_);
 
 protected:
-	void fillBufer(double inComing_, double expense_, double surPlus_, QString date_, int itter);
+	void fillBufer(double inComing_, double expense_, double surPlus_, QString date_);
+	QString addStringDay(QString date_);
 
 	struct dateBufer
 	{
@@ -39,5 +41,6 @@ protected:
 
 	QString authLogin;
 	static int authId;
+	static int calcTime;
 };
 #endif // !DBFASADE_H
