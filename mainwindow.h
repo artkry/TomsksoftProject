@@ -10,7 +10,8 @@ class QMenuBar;
 class QPushButton;
 class QTextBrowser;
 class QGroupBox;
-class ModalMainWindow;
+class QVBoxLayout;
+class DBFasade;
 
 class MainWindow : public QDialog
 {
@@ -24,22 +25,27 @@ public slots:
 	void changeMonth(QDate date);
 	void pushChanges();
 	void pullChanges();
-	void makeChanges();
+	void makeChanges(QString date_);
 
 private:
 	void createMenu();
 	void createHorizontalGroupBox();
 	void createHorizontalButtonBox();
 	void calendar();
+	void reRenderCalendar();
 
 	QDate selectedDate;
-	QTextBrowser *editor;
+	QVBoxLayout *windowLayout;
 	QGroupBox *horizontalGroupBox;
 	QGroupBox *horizontalButtonBox;
-
+	QGroupBox *calendarGridGroupBox;
 	
 	QMenuBar *menuBar;
 	QMenu *fileMenu;
 	QAction *exitAction;
+	//QAction *settingAction;
+	QAction *changeUser;
+
+	DBFasade *sdb;
 };
 #endif // !MAINWINDOW_H

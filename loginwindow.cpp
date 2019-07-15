@@ -77,6 +77,7 @@ void LoginWindow::createHorizontalGroupBox()
 
 void LoginWindow::on_enterButton_clicked()
 {
+	if (!(this->login->text() == "" || this->pass->text() == "")) {
 	bool isCorrect = sdb->authRequest(this->login->text(), this->pass->text());
 
 	if (!isCorrect) {
@@ -88,6 +89,11 @@ void LoginWindow::on_enterButton_clicked()
 		mainWindow = new MainWindow;
 		mainWindow->show();
 	}
+	}
+	else {
+		qDebug() << "ZAPOLNITE POLYA !";
+	}
+
 }
 
 void LoginWindow::on_registrButton_clicked()
@@ -100,7 +106,7 @@ void LoginWindow::on_registrButton_clicked()
 LoginWindow::~LoginWindow() {
 	
 	
-	delete sdb;
+	//delete sdb;
 
 	delete menuBar;
 	delete formGroupBox;

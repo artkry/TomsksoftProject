@@ -34,8 +34,8 @@ RegistrationWindow::RegistrationWindow()
 
 RegistrationWindow::~RegistrationWindow()
 {
-	delete sdb;
-
+	//delete sdb;
+	
 	delete menuBar;
 	delete horizontalGroupBox;
 	delete formGroupBox;

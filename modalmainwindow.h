@@ -15,16 +15,18 @@ class ModalMainWindow :public QDialog
 public:
 	ModalMainWindow(QDialog *parent = 0);
 	~ModalMainWindow();
+	double getInComing() const;
+	double getExpense() const;
+	double getSurPlus() const;
 
-signals:
-	void applied();
+private slots:
+    void on_push_button_clicked();
 
 private:
 	void createFormGroupBox();
 	void createHorizontalGroupBox();
 
-	QLineEdit *longDate;
-	QLineEdit *date;
+	//QLineEdit *longDate;
 	QLineEdit *inComing;
 	QLineEdit *expense;
 	QLineEdit *surPlus;
