@@ -21,6 +21,7 @@ public:
 	bool pushUserData(double inComing_, double expense_, double surPlus_, QString date_);
 	void fillDayWidgetFromBufer(DayWidget &day);
 	void calculateChanges(QString date_, double inComing_, double expense_, double surPlus_);
+	void clearBufer();
 
 protected:
 	void fillBufer(double inComing_, double expense_, double surPlus_, QString date_);

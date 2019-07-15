@@ -32,10 +32,9 @@ private:
 	void createHorizontalGroupBox();
 	void createHorizontalButtonBox();
 	void calendar();
-	void calendar1();
+	void reRenderCalendar();
 
 	QDate selectedDate;
-	QTextBrowser *editor;
 	QVBoxLayout *windowLayout;
 	QGroupBox *horizontalGroupBox;
 	QGroupBox *horizontalButtonBox;
@@ -44,6 +43,8 @@ private:
 	QMenuBar *menuBar;
 	QMenu *fileMenu;
 	QAction *exitAction;
+	//QAction *settingAction;
+	QAction *changeUser;
 
 	DBFasade *sdb;
 };
