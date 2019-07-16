@@ -63,8 +63,6 @@ void ModalMainWindow::createHorizontalGroupBox()
 	horizontalGroupBox->setLayout(layout);
 }
 
-void ModalMainWindow::on_push_button_clicked() {}
-
 double ModalMainWindow::getInComing() const { return this->inComing->text().toDouble(); }
 
 double ModalMainWindow::getExpense() const { return this->expense->text().toDouble(); }

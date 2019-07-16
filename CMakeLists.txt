@@ -10,7 +10,9 @@ set(PROJECT_HEADERS
     dbfasade.h
     registrationwindow.h
     modalmainwindow.h
-    daywidget.h)
+    daywidget.h
+    aboutwindow.h
+    instructionwindow.h)
 
 set(PROJECT_SOURCES 
     main.cpp
@@ -19,7 +21,9 @@ set(PROJECT_SOURCES
     dbfasade.cpp
     registrationwindow.cpp
     modalmainwindow.cpp
-    daywidget.cpp)
+    daywidget.cpp
+    aboutwindow.cpp
+    instructionwindow.cpp)
 
 qt5_wrap_cpp(PROJECT_SOURCES_MOC ${PROJECT_HEADERS})
 

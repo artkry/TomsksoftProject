@@ -5,7 +5,6 @@
 
 class QPushButton;
 class QLineEdit;
-class QAction;
 class QGroupBox;
 
 class ModalMainWindow :public QDialog
@@ -19,14 +18,10 @@ public:
 	double getExpense() const;
 	double getSurPlus() const;
 
-private slots:
-    void on_push_button_clicked();
-
 private:
 	void createFormGroupBox();
 	void createHorizontalGroupBox();
 
-	//QLineEdit *longDate;
 	QLineEdit *inComing;
 	QLineEdit *expense;
 	QLineEdit *surPlus;
