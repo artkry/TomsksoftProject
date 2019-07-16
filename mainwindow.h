@@ -26,6 +26,8 @@ public slots:
 	void pushChanges();
 	void pullChanges();
 	void makeChanges(QString date_);
+	void aboutAction();
+	void instructAction();
 
 private:
 	void createMenu();
@@ -43,8 +45,6 @@ private:
 	QMenuBar *menuBar;
 	QMenu *fileMenu;
 	QAction *exitAction;
-	//QAction *settingAction;
-	QAction *changeUser;
 
 	DBFasade *sdb;
 };

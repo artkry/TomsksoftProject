@@ -54,11 +54,16 @@ void MainWindow::createMenu()
 	menuBar = new QMenuBar;
 
 	fileMenu = new QMenu(tr("&Menu"), this);
-	exitAction = fileMenu->addAction(tr("&Exit"));
-	changeUser = fileMenu->addAction(tr("&Change User"));
-	menuBar->addMenu(fileMenu);
 
-	//connect(changeUser, &QAction::triggered, this, SLOT());
+	QAction *instructAction = fileMenu->addAction(tr("&Instruction"));
+	QAction *aboutAction = fileMenu->addAction(tr("&About"));
+	exitAction = fileMenu->addAction(tr("&Exit"));
+	
+	
+	menuBar->addMenu(fileMenu);
+	
+	connect(instructAction, &QAction::triggered, this, &MainWindow::instructAction);
+	connect(aboutAction, &QAction::triggered, this, &MainWindow::aboutAction);
 	connect(exitAction, &QAction::triggered, this, &QDialog::accept);
 	
 }
@@ -230,4 +235,59 @@ void MainWindow::reRenderCalendar()
 
 	windowLayout->insertWidget(1, calendarGridGroupBox);
 	windowLayout->update();
+}
+
+void MainWindow::aboutAction() 
+{
+	QMessageBox msgBox;
+	/*msgBox.setInformativeText("\tОписание: Программа для расчета и отображения" 
+		"предполагаемого остатка денег на некоторое время вперед.\n"
+	"Состав:\n\t -Экран заставка (показываем при старте приложения в течение 3х секунд);\n\t"
+	"-Основная форма;\n\t"
+	"-Подчиненная форма ввода данных;\n\t"
+	"-Окно с инструкцией, поясняющей как пользоваться программой;\n\t"
+	"-Окно About.\n"
+	"Бизнес-логика:\n\t"
+	"интерфейс, в который заносим текущий остаток (когда заходим, на какой захотим день)," 
+		"расходы (когда захотим и на какой захотим день), поступления (когда захотим и на какой захотим день), "
+		"а оно нам отображает что будет происходить дальше примерно на месяц вперед.\n\n");*/
+	msgBox.setInformativeText(QObject::trUtf8("\tОписание: Программа для расчета и отображения" 
+		"предполагаемого остатка денег на некоторое время вперед.\n"
+	"Состав:\n\t -Экран заставка (показываем при старте приложения в течение 3х секунд);\n\t"
+	"-Основная форма;\n\t"
+	"-Подчиненная форма ввода данных;\n\t"
+	"-Окно с инструкцией, поясняющей как пользоваться программой;\n\t"
+	"-Окно About.\n"
+	"Бизнес-логика:\n\t"
+	"интерфейс, в который заносим текущий остаток (когда заходим, на какой захотим день)," 
+		"расходы (когда захотим и на какой захотим день), поступления (когда захотим и на какой захотим день), "
+		"а оно нам отображает что будет происходить дальше примерно на месяц вперед.\n\n"));
+	msgBox.setStandardButtons(QMessageBox::Ok);
+
+	int ret = msgBox.exec();
+
+	switch (ret)
+	{
+	case QMessageBox::Ok:
+		break;
+	default:
+		break;
+	}
+}
+
+void MainWindow::instructAction() 
+{
+	QMessageBox msgBox;
+	msgBox.setInformativeText(QObject::trUtf8("Здесь должна быть инструкция."));
+	msgBox.setStandardButtons(QMessageBox::Ok);
+
+	int ret = msgBox.exec();
+
+	switch (ret)
+	{
+	case QMessageBox::Ok:
+		break;
+	default:
+		break;
+	}
 }
