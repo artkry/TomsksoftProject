@@ -13,8 +13,7 @@
 #include <QPushButton>
 #include <QDateTimeEdit>
 #include <QTextTableCell>
-
-//днаюбхрэ MES BOX дкъ PULL х PUSH
+#include <QMessageBox>
 
 MainWindow::MainWindow()
 {
@@ -94,7 +93,6 @@ void MainWindow::createHorizontalButtonBox()
 	connect(pull, SIGNAL(clicked()), this, SLOT(pullChanges()));
 	connect(push, SIGNAL(clicked()), this, SLOT(pushChanges()));
 
-	layout->addSpacing(150);
 	layout->addWidget(pull);
 	layout->addSpacing(150);
 	layout->addWidget(push);
@@ -167,23 +165,56 @@ void MainWindow::makeChanges(QString date_)
 
 void MainWindow::pushChanges() 
 {
-	sdb->removeUserData();
-	sdb->pushData();
+	QMessageBox msgBox;
+	msgBox.setInformativeText("Are you sure you want to save change?");
+	msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Save);
+
+	int ret = msgBox.exec();
+
+	switch (ret)
+	{
+	case QMessageBox::Save:
+		sdb->removeUserData();
+		sdb->pushData();
+		break;
+	case QMessageBox::Cancel:
+		break;
+	default:
+		break;
+	}
 }
 
 void MainWindow::pullChanges() 
 {
-	sdb->clearBufer();
-	bool isCorrect = sdb->pullUserData();
+	QMessageBox msgBox;
+	msgBox.setInformativeText("Are you sure you want to delete your changes?");
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Yes);
 
-	if (isCorrect) {
-		qDebug() << "request ok (mainwdw)";
-	}
-	else {
-		qDebug() << "bad request (mainwdw)";
-	}
+	int ret = msgBox.exec();
+	bool isCorrect;
 
-	reRenderCalendar();
+	switch (ret)
+	{
+	case QMessageBox::Yes:
+		sdb->clearBufer();
+		isCorrect = sdb->pullUserData();
+
+		if (isCorrect) {
+			qDebug() << "request ok (mainwdw)";
+		}
+		else {
+			qDebug() << "bad request (mainwdw)";
+		}
+
+		reRenderCalendar();
+		break;
+	case QMessageBox::Cancel:
+		break;
+	default:
+		break;
+	}
 }
 
 void MainWindow::reRenderCalendar()

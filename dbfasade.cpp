@@ -46,7 +46,6 @@ DBFasade::~DBFasade()
 	delete &rec;
 }
 
-
 bool DBFasade::authRequest(QString login, QString pass)
 {
 	query->clear();
@@ -268,7 +267,6 @@ void DBFasade::calculateChanges(QString date_, double inComing_, double expense_
 				QList<dateBufer>::iterator sCount;
 				QString yesterdayDate = minusStringDay(date_);
 				int flag = 0;
-				//qDebug() << "yesterday date: " << yesterdayDate;
 				/*ищем остаток с предыдущего дня, если предыдущий день есть,
 				то расчитываем с его учетом*/ 
 				for (sCount = bufer.begin(); sCount != bufer.end(); ++sCount) {
@@ -286,9 +284,7 @@ void DBFasade::calculateChanges(QString date_, double inComing_, double expense_
 			else { count->surPlusB = surPlus_; }//если поле остаток не пустое, то просто пишем его в буфер этого дня
 			
 			itter = count - bufer.begin();
-			//qDebug() << "have this data1 " << date_ << " itter1 " << itter;
-			//qDebug() << "incom1 " << count->inComingB <<
-				//"exp1 " << count->expenseB << "sur1 " << count->surPlusB;
+
 			break;
 		}
 	}
@@ -306,8 +302,6 @@ void DBFasade::calculateChanges(QString date_, double inComing_, double expense_
 		bufer.append(item);
 
 		itter = bufer.size() - 1;
-		//qDebug() << "havent this data2 " << "  itter2 " << itter;
-		//qDebug() << "inc2 " << item.inComingB << "exp2 " << item.expenseB << "sur2 " << item.surPlusB;
 	}
 	//цикл заполнения остальных 30 дней
 	for (int i = 0; i < calcTime - 1; i++) {
@@ -318,15 +312,13 @@ void DBFasade::calculateChanges(QString date_, double inComing_, double expense_
 		QList<dateBufer>::iterator tcount;
 		for (tcount = bufer.begin(); tcount != bufer.end(); ++tcount) {
 			if (tcount->date == currentDate) {
+				
 				QList<dateBufer>::iterator fcount = tcount;
 				--fcount;
-				//tcount->surPlusB = bufer[currentIndex].surPlusB + tcount->inComingB - tcount->expenseB;
 				tcount->surPlusB = fcount->surPlusB + tcount->inComingB - tcount->expenseB;
 				++fcount;
+
 				itter = tcount - bufer.begin();
-				//qDebug() << "have this data3 " << currentDate << "  itter3 " << itter;
-				//qDebug() << "incom2 " << count->inComingB <<
-					//"exp2 " << count->expenseB << "sur2 " << count->surPlusB;
 				break;
 			}
 		}
@@ -340,8 +332,6 @@ void DBFasade::calculateChanges(QString date_, double inComing_, double expense_
 
 			bufer.append(item);
 			itter = bufer.size() - 1;
-			//qDebug() << "havent this data 4  " << "  itter4  " << itter;
-			//qDebug() << "inc4 " << item.inComingB << "exp4 " << item.expenseB << "sur4 " << item.surPlusB;
 		}
 	}
 }

@@ -48,8 +48,14 @@ RegistrationWindow::~RegistrationWindow()
 void RegistrationWindow::createHorizontalGroupBox() 
 {
 	//слой шапки
+	QPixmap pix("logo.png");
+	
 	horizontalGroupBox = new QGroupBox;
 	QHBoxLayout *layout = new QHBoxLayout;
+	
+	QLabel *logoLabel = new QLabel;
+	logoLabel->setPixmap(pix);
+	layout->addWidget(logoLabel);
 
 	horizontalGroupBox->setLayout(layout);
 }

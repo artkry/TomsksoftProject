@@ -19,7 +19,7 @@ public:
 	bool isCreated(QString login);
 	bool pullUserData();
 	void removeUserData(); // public etc can be useful for user tools
-	void pushUserDataSQL(double inComing_, double expense_, double surPlus_, QString date_); //remove to protected
+	//void pushUserDataSQL(double inComing_, double expense_, double surPlus_, QString date_); //remove to protected
 	void pushData();
 	void fillDayWidgetFromBufer(DayWidget &day);
 	void calculateChanges(QString date_, double inComing_, double expense_, double surPlus_);
@@ -27,6 +27,7 @@ public:
 
 protected:
 	void fillBufer(double inComing_, double expense_, double surPlus_, QString date_);
+	void pushUserDataSQL(double inComing_, double expense_, double surPlus_, QString date_);
 	QString addStringDay(QString date_);
 	QString minusStringDay(QString date_);
 
