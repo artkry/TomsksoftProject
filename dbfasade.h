@@ -21,10 +21,11 @@ public:
 	void updateDayWidgetData(QDate date_, double inComing_, double expense_, double surPlus_);
 	void getCurrentDateData(QDate date_, EditForm &form);
 	//void pushUserData();
+	double getYesterdaySurplus(QDate date_);
 	
 protected:
 	void insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_);
-	double getYesterdaySurplus(QDate date_);
+	//double getYesterdaySurplus(QDate date_);
 	void updateDataBase(QDate date_, double surPlus_);
 
 	QSqlDatabase _sdb;

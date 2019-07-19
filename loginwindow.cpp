@@ -14,7 +14,8 @@
 
 LoginWindow::LoginWindow()
 {
-	this->setGeometry(300, 100, 500, 500);
+	this->setGeometry(300, 100, 500, 330);
+	this->setFixedSize(500, 330);
 
 	_sdb = new DBFasade;
 
@@ -30,7 +31,7 @@ LoginWindow::~LoginWindow() {}
 
 void LoginWindow::createHorizontalLayout() 
 {
-	QPixmap pix("logo.png");
+	QPixmap pix(":logo.png");
 
 	QHBoxLayout *layout = new QHBoxLayout;
 

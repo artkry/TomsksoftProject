@@ -14,7 +14,8 @@
 
 RegistrationWindow::RegistrationWindow()
 {
-	this->setGeometry(300, 100, 500, 500);
+	this->setGeometry(300, 100, 500, 350);
+	this->setFixedSize(500, 350);
 
 	_sdb = new DBFasade;
 
@@ -30,7 +31,7 @@ RegistrationWindow::~RegistrationWindow() {}
 
 void RegistrationWindow::createHorizontalLayout()
 {
-	QPixmap pix("logo.png");
+	QPixmap pix(":logo.png");
 
 	QHBoxLayout *layout = new QHBoxLayout;
 

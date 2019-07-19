@@ -64,7 +64,7 @@ void MainWindow::createHorizontalLayout()
 	connect(monthEdit, SIGNAL(dateChanged(QDate)), this, SLOT(changeMonth(QDate)));
 
 	layout->addWidget(monthEdit);
-
+	layout->setSizeConstraint(QLayout::SetFixedSize);
 	_mainLayout->addLayout(layout);
 }
 
@@ -73,13 +73,15 @@ void MainWindow::createCalendarGroupBox()
 	QDate date(_selectedDate.year(), _selectedDate.month(), 1);
 
 	_calendarGroupBox = new QGroupBox;
+	//_calendarGroupBox->setFixedSize(900, 560);
 	QGridLayout *calendarLayout = new QGridLayout;
 	calendarLayout->setVerticalSpacing(0);
 	calendarLayout->setHorizontalSpacing(0);
+	calendarLayout->setSizeConstraint(QLayout::SetFixedSize);
 
 	for (int weekDay = 0; weekDay < 7; ++weekDay) {
 		QLabel *weekDayName = new QLabel(QString("%1").arg(QDate::longDayName(weekDay + 1)));
-		calendarLayout->addWidget(weekDayName, 0, weekDay + 1);
+		calendarLayout->addWidget(weekDayName, 0, weekDay + 1, Qt::AlignCenter);
 	}
 
 	int weekNum = 1;

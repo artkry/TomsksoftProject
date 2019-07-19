@@ -11,14 +11,15 @@ EditForm::EditForm(QDate date_, QDialog *parent) : QDialog(parent)
 {
 	this->setGeometry(400, 150, 250, 170);
 	_sdb = new DBFasade;
+	_buferDate = date_;
 
 	_inComing = new QLineEdit;
 	_expense = new QLineEdit;
 	_surPlus = new QLineEdit;
 	getDateData(date_);
 
-	//connect(_inComing, &QLineEdit::textChanged, this, &EditForm::recalcInComing);
-	//connect(_expense, &QLineEdit::textChanged, this, &EditForm::recalcExpense);
+	connect(_inComing, &QLineEdit::textChanged, this, &EditForm::recalcInComing);
+	connect(_expense, &QLineEdit::textChanged, this, &EditForm::recalcExpense);
 
 	_mainLayout = new QVBoxLayout;
 	createVerticalLayout(date_);
@@ -79,26 +80,26 @@ double EditForm::getExpense() const { return this->_expense->text().toDouble(); 
 
 double EditForm::getSurPlus() const { return this->_surPlus->text().toDouble(); }
 
-//void EditForm::recalcInComing(const QString &txt)
-//{
-//	double inc = txt.toDouble();
-//	double exp = this->_expense->text().toDouble();
-//	double surplus = getSurPlus() - getInComing() + getExpense();
-//	double result = inc - exp + surplus;
-//	QString surPlus = QString::number(result);
-//
-//	_surPlus->clear();
-//	_surPlus->insert(surPlus);
-//}
-//
-//void EditForm::recalcExpense(const QString &txt)
-//{
-//	double exp = txt.toDouble();
-//	double inc = this->_inComing->text().toDouble();
-//	double surplus = getSurPlus() - getInComing() + getExpense();
-//	double result = inc - exp + surplus;
-//	QString surPlus = QString::number(surplus);
-//
-//	_surPlus->clear();
-//	_surPlus->insert(surPlus);
-//}
+void EditForm::recalcInComing(const QString &txt)
+{
+	double yesterdaySurplus = _sdb->getYesterdaySurplus(_buferDate);
+	double inc = txt.toDouble();
+	double exp = this->_expense->text().toDouble();
+	double result = inc - exp + yesterdaySurplus;
+	QString surPlus = QString::number(result);
+
+	_surPlus->clear();
+	_surPlus->insert(surPlus);
+}
+
+void EditForm::recalcExpense(const QString &txt)
+{
+	double yesterdaySurplus = _sdb->getYesterdaySurplus(_buferDate);
+	double exp = txt.toDouble();
+	double inc = this->_inComing->text().toDouble();
+	double result = inc - exp + yesterdaySurplus;
+	QString surPlus = QString::number(result);
+
+	_surPlus->clear();
+	_surPlus->insert(surPlus);
+}

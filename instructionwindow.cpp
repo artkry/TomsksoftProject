@@ -1,4 +1,4 @@
-#include "instructionwindow.h"
+п»ї#include "instructionwindow.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -7,7 +7,8 @@
 
 InstructionWindow::InstructionWindow(QDialog *parent) : QDialog(parent)
 {
-	this->setGeometry(400, 150, 300, 250);
+	this->setGeometry(400, 150, 400, 300);
+	//this->setFixedSize(400, 300);
 	fillInfo();
 
 	QPushButton *acceptButton = new QPushButton(tr("OK"));
@@ -25,5 +26,5 @@ InstructionWindow::~InstructionWindow() {}
 
 void InstructionWindow::fillInfo()
 {
-	_aboutInfo = new QLabel(tr("Здесь должна быть инфтрукция!"));
+	_aboutInfo = new QLabel(QObject::trUtf8("Р—РґРµСЃСЊ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РёРЅС„С‚СЂСѓРєС†РёСЏ!"));
 }

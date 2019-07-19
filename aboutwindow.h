@@ -1,4 +1,4 @@
-#ifndef ABOUTWINDOW_H
+﻿#ifndef ABOUTWINDOW_H
 #define ABOUTWINDOW_H
 
 #include <QDialog>

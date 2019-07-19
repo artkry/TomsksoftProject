@@ -1,4 +1,4 @@
-#ifndef INSTRUCTIONWINDOW_H
+﻿#ifndef INSTRUCTIONWINDOW_H
 #define INSTRUCTIONWINDOW_H
 
 #include <QDialog>

@@ -2,6 +2,7 @@
 #define EDITFORM_H
 
 #include <QDialog>
+#include <QDate>
 
 class DayWidget;
 class QLineEdit;
@@ -24,8 +25,8 @@ signals:
 	void acceptChanges();
 
 private slots:
-    //void recalcInComing(const QString &txt);
-	//void recalcExpense(const QString &txt);
+    void recalcInComing(const QString &txt);
+	void recalcExpense(const QString &txt);
 
 protected:
 	void createVerticalLayout(QDate date_);
@@ -36,6 +37,7 @@ protected:
 	QLineEdit *_expense;
 	QLineEdit *_surPlus;
 	QVBoxLayout *_mainLayout;
+	QDate _buferDate;
 
 	DBFasade *_sdb;
 };
