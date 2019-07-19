@@ -2,6 +2,8 @@
 #include "dbfasade.h"
 #include "editform.h"
 #include "daywidget.h"
+#include "aboutwindow.h"
+#include "instructionwindow.h"
 
 #include <QMenuBar>
 #include <QMenu>
@@ -44,8 +46,8 @@ void MainWindow::createMenu()
 
 	menuBar->addMenu(fileMenu);
 
-	//connect(instructionAction, &QAction::triggered, this, &MainWindow::instructAction);
-	//connect(aboutAction, &QAction::triggered, this, &MainWindow::aboutAction);
+	connect(instructionAction, &QAction::triggered, this, &MainWindow::instructAction);
+	connect(aboutAction, &QAction::triggered, this, &MainWindow::aboutAction);
 	connect(exitAction, &QAction::triggered, this, &QDialog::accept);
 
 	_mainLayout->setMenuBar(menuBar);
@@ -126,6 +128,30 @@ void MainWindow::makeChanges(QDate date_)
 		_sdb->updateDayWidgetData(date_, editform.getInComing(),
 			editform.getExpense(), editform.getSurPlus());
 		reRenderCalendar();
+	default:
+		break;
+	}
+}
+
+void MainWindow::aboutAction() 
+{
+	AboutWindow aboutwindow(this);
+	switch (aboutwindow.exec())
+	{
+	case QDialog::Accepted:
+		break;
+	default:
+		break;
+	}
+}
+
+void MainWindow::instructAction() 
+{
+	InstructionWindow inctructionwindow(this);
+	switch (inctructionwindow.exec())
+	{
+	case QDialog::Accepted:
+		break;
 	default:
 		break;
 	}

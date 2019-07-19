@@ -18,6 +18,8 @@ public:
 private slots:
 	void changeMonth(QDate date_);
 	void makeChanges(QDate date_);
+	void aboutAction();
+	void instructAction();
 
 protected:
 	void createMenu();

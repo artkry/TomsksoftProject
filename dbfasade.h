@@ -11,7 +11,6 @@ class EditForm;
 
 class DBFasade
 {
-
 public:
 	DBFasade();
 	~DBFasade();
@@ -21,7 +20,7 @@ public:
 	void fillDayWidget(QDate date_, DayWidget &day);
 	void updateDayWidgetData(QDate date_, double inComing_, double expense_, double surPlus_);
 	void getCurrentDateData(QDate date_, EditForm &form);
-	void pushUserData();
+	//void pushUserData();
 	
 protected:
 	void insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_);

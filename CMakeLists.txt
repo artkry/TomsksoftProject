@@ -10,7 +10,9 @@ set(PROJECT_HEADERS
     registrationwindow.h
     dbfasade.h
     daywidget.h
-    editform.h)
+    editform.h
+    aboutwindow.h
+    instructionwindow.h)
 
 set(PROJECT_SOURCES
     mainwindow.cpp
@@ -19,11 +21,16 @@ set(PROJECT_SOURCES
     dbfasade.cpp
     main.cpp
     daywidget.cpp
-    editform.cpp)
+    editform.cpp
+    aboutwindow.cpp
+    instructionwindow.cpp)
+
+set(PROJECT_QRC 
+    res.qrc)
 
 qt5_wrap_cpp(PROJECT_SOURCES_MOC ${PROJECT_HEADERS})
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_SOURCES_MOC})
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_SOURCES_MOC} ${PROJECT_QRC})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
