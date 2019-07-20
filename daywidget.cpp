@@ -10,14 +10,17 @@ DayWidget::DayWidget(QDate date_)
 	_sdb = new DBFasade;
 	this->_date = date_;
 
-	_sdb->fillDayWidget(date_, *this);
+	_sdb->fillDayWidget(date_, _inComing, _expense, _surPlus);
 
 	_mainLayout = new QVBoxLayout;
 	createFormLayout();
 	setLayout(_mainLayout);
 }
 
-DayWidget::~DayWidget() {}
+DayWidget::~DayWidget() 
+{
+	delete _sdb;
+}
 
 void DayWidget::createFormLayout()
 {

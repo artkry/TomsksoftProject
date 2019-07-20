@@ -1,12 +1,10 @@
 #include "dbfasade.h"
-#include "daywidget.h"
-#include "editform.h"
 
 int DBFasade::_authId = 0;
+QSqlDatabase DBFasade::_sdb = QSqlDatabase::addDatabase("QSQLITE");
 
 DBFasade::DBFasade()
 {
-	_sdb = QSqlDatabase::addDatabase("QSQLITE");
 	_sdb.setDatabaseName("database.db");
 
 	if (!_sdb.open()) {
@@ -41,9 +39,6 @@ DBFasade::DBFasade()
 DBFasade::~DBFasade()
 {
 	delete _query;
-	//sdb.close();
-	//sdb.removeDatabase(sdb.connectionName());
-	//delete &rec;
 }
 
 bool DBFasade::authRequest(QString login, QString pass)
@@ -126,16 +121,17 @@ bool DBFasade::isCreated(QString login)
 	}
 }
 
-void DBFasade::fillDayWidget(QDate date_, DayWidget &day) 
+void DBFasade::fillDayWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
 {
-	QSqlQuery *query = new QSqlQuery(_sdb);
+	//QSqlQuery *query = new QSqlQuery(_sdb);
+	_query->clear();
 
 	double yesterdaySurplus = getYesterdaySurplus(date_);
 
-	QString str = "SELECT incoming, expense, surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
+	QString str = "SELECT incoming, expense FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
 	QString str_ = str.arg(date_.toString("yyyy.MM.dd")).arg(_authId);
 
-	bool isCorrect = query->exec(str_);
+	bool isCorrect = _query->exec(str_);
 
 	if (!isCorrect) {
 		qDebug() << "fill query not ok dbfasade";
@@ -144,31 +140,27 @@ void DBFasade::fillDayWidget(QDate date_, DayWidget &day)
 		qDebug() << "fill query ok dbfasade";
 	}
 
-	QSqlRecord rec = query->record();
-	query->isActive();
-	query->isSelect();
+	QSqlRecord rec = _query->record();
+	_query->isActive();
+	_query->isSelect();
 
-	if (!query->first()) {
-		day.setInComing(0.0);
-		day.setExpense(0.0);
-		day.setSurPlus(yesterdaySurplus);
+	if (!_query->first()) {
+		inComing_ = 0.0;
+		expense_ = 0.0;
+		surPlus_ = yesterdaySurplus;
 		insertThisWidget(date_, 0.0, 0.0, yesterdaySurplus);
 	}
 	else {
-		double incomingDB = query->value(rec.indexOf("incoming")).toDouble();
-		double expenseDB = query->value(rec.indexOf("expense")).toDouble();
-		double surplusDB = query->value(rec.indexOf("surplus")).toDouble();
-		double result = yesterdaySurplus + incomingDB - expenseDB;
-
-		day.setInComing(incomingDB);
-		day.setExpense(expenseDB);
-		day.setSurPlus(result);
+		inComing_ = _query->value(rec.indexOf("incoming")).toDouble();
+		expense_ = _query->value(rec.indexOf("expense")).toDouble();
+		surPlus_ = yesterdaySurplus + inComing_ - expense_;
 	}
 }
 
 double DBFasade::getYesterdaySurplus(QDate date_)
 {
-	QSqlQuery *query = new QSqlQuery(_sdb);
+	//QSqlQuery *query = new QSqlQuery(_sdb);
+	_query->clear();
 
 	QDate yesterdayDate = date_.addDays(-1);
 	double yesterdaySurplus = 0.0;
@@ -176,7 +168,7 @@ double DBFasade::getYesterdaySurplus(QDate date_)
 	QString str = "SELECT surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
 	QString str_ = str.arg(yesterdayDate.toString("yyyy.MM.dd")).arg(_authId);
 
-	bool isCorrect = query->exec(str_);
+	bool isCorrect = _query->exec(str_);
 
 	if (!isCorrect) {
 		qDebug() << "yesterdaydate isn't correct dbfasade";
@@ -186,13 +178,13 @@ double DBFasade::getYesterdaySurplus(QDate date_)
 		qDebug() << "yesterdaydate is correct dbfasade";
 	}
 
-	QSqlRecord rec = query->record();
+	QSqlRecord rec = _query->record();
 
-	if (!query->first()) {
+	if (!_query->first()) {
 		return yesterdaySurplus;
 	}
 	else {
-		return yesterdaySurplus = query->value(rec.indexOf("surplus")).toDouble();
+		return yesterdaySurplus = _query->value(rec.indexOf("surplus")).toDouble();
 	}
 }
 
@@ -200,7 +192,8 @@ void DBFasade::updateDayWidgetData(QDate date_, double inComing_, double expense
 {
 	double yesterdaySurplus = getYesterdaySurplus(date_);
 
-	QSqlQuery *query = new QSqlQuery(_sdb);
+	//QSqlQuery *query = new QSqlQuery(_sdb);
+	_query->clear();
 
 	QString str = "UPDATE UsersData "
 		"SET incoming = %1, "
@@ -226,7 +219,7 @@ void DBFasade::updateDayWidgetData(QDate date_, double inComing_, double expense
 		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
 	}
 
-	bool isCorrect = query->exec(str_);
+	bool isCorrect = _query->exec(str_);
 
 	if (!isCorrect) {
 		qDebug() << "non correct update dbfasasde";
@@ -272,13 +265,13 @@ void DBFasade::updateDataBase(QDate date_, double surPlus_)
 
 void DBFasade::insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_) 
 {
-	QSqlQuery *query = new QSqlQuery(_sdb);
-
+	//QSqlQuery *query = new QSqlQuery(_sdb);
+	_query->clear();
 	QString str = "INSERT INTO UsersData (uid, dtime, incoming, expense, surplus)"
 		"VALUES(%1, '%2', %3, %4, %5)";
 	QString str_ = str.arg(_authId).arg(date_.toString("yyyy.MM.dd")).arg(inComing_).arg(expense_).arg(surPlus_);
 
-	bool isCorrect = query->exec(str_);
+	bool isCorrect = _query->exec(str_);
 
 	if (!isCorrect) {
 		qDebug() << "query non correct insertDW";
@@ -288,21 +281,19 @@ void DBFasade::insertThisWidget(QDate date_, double inComing_, double expense_, 
 	}
 }
 
-void DBFasade::getCurrentDateData(QDate date_, EditForm &form)
+void DBFasade::getCurrentDateData(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
 {
-	QSqlQuery *query = new QSqlQuery(_sdb);
-
+	//QSqlQuery *query = new QSqlQuery(_sdb);
+	_query->clear();
 	QString str = "SELECT incoming, expense, surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
 	QString str_ = str.arg(date_.toString("yyyy.MM.dd")).arg(_authId);
 
-	bool isCorrect = query->exec(str_);
+	bool isCorrect = _query->exec(str_);
 
-	QSqlRecord rec = query->record();
-	query->first();
+	QSqlRecord rec = _query->record();
+	_query->first();
 
-	double incomingDB = query->value(rec.indexOf("incoming")).toDouble();
-	double expenseDB = query->value(rec.indexOf("expense")).toDouble();
-	double surplusDB = query->value(rec.indexOf("surplus")).toDouble();
-
-	form.setValues(incomingDB, expenseDB, surplusDB);
+	inComing_ = _query->value(rec.indexOf("incoming")).toDouble();
+	expense_ = _query->value(rec.indexOf("expense")).toDouble();
+	surPlus_ = _query->value(rec.indexOf("surplus")).toDouble();
 }

@@ -60,7 +60,12 @@ void EditForm::createHorizontalLayout()
 
 void EditForm::getDateData(QDate date_) 
 {
-	_sdb->getCurrentDateData(date_, *this);
+	double inc = 0.0;
+	double exp = 0.0;
+	double sur = 0.0;
+	_sdb->getCurrentDateData(date_, inc, exp, sur);
+
+	setValues(inc, exp, sur);
 }
 
 void EditForm::setValues(double inComing_, double expense_, double surplus_)
