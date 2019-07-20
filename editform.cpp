@@ -79,11 +79,11 @@ void EditForm::setValues(double inComing_, double expense_, double surplus_)
 	_surPlus->insert(surPlus);
 }
 
-double EditForm::getInComing() const { return this->_inComing->text().toDouble(); }
+double EditForm::getInComing() const { return _inComing->text().toDouble(); }
 
-double EditForm::getExpense() const { return this->_expense->text().toDouble(); }
+double EditForm::getExpense() const { return _expense->text().toDouble(); }
 
-double EditForm::getSurPlus() const { return this->_surPlus->text().toDouble(); }
+double EditForm::getSurPlus() const { return _surPlus->text().toDouble(); }
 
 void EditForm::recalcInComing(const QString &txt)
 {

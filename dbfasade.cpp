@@ -123,7 +123,6 @@ bool DBFasade::isCreated(QString login)
 
 void DBFasade::fillDayWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
 {
-	//QSqlQuery *query = new QSqlQuery(_sdb);
 	_query->clear();
 
 	double yesterdaySurplus = getYesterdaySurplus(date_);
@@ -159,7 +158,6 @@ void DBFasade::fillDayWidget(QDate date_, double &inComing_, double &expense_, d
 
 double DBFasade::getYesterdaySurplus(QDate date_)
 {
-	//QSqlQuery *query = new QSqlQuery(_sdb);
 	_query->clear();
 
 	QDate yesterdayDate = date_.addDays(-1);
@@ -192,7 +190,6 @@ void DBFasade::updateDayWidgetData(QDate date_, double inComing_, double expense
 {
 	double yesterdaySurplus = getYesterdaySurplus(date_);
 
-	//QSqlQuery *query = new QSqlQuery(_sdb);
 	_query->clear();
 
 	QString str = "UPDATE UsersData "
@@ -212,9 +209,9 @@ void DBFasade::updateDayWidgetData(QDate date_, double inComing_, double expense
 		todaySurplus = yesterdaySurplus + inComing_ - expense_;
 		double trueSurplus = yesterdaySurplus + inComing_ - expense_;
 
-		if (todaySurplus != trueSurplus) {
-			//как то обозначить
-		}
+		//if (todaySurplus != trueSurplus) {
+		//	//как то обозначить
+		//}
 
 		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
 	}
@@ -236,12 +233,14 @@ void DBFasade::updateDataBase(QDate date_, double surPlus_)
 	double surplus = surPlus_;
 	QDate currentDate = date_;
 	QSqlQuery *query = new QSqlQuery(_sdb);
+	//QSqlQuery *queryUpdate = new QSqlQuery(_sdb);
 	QString str = "SELECT incoming, expense FROM UsersData WHERE UsersData.uid = %1 AND UsersData.dtime = '%2';";
 	QString strUpdate = "UPDATE UsersData "
 		"SET surplus = %1 "
 		"WHERE UsersData.uid = %2 AND UsersData.dtime = '%3';";
 
 	while (true) {
+		query->clear();
 		currentDate = currentDate.addDays(1);
 		QString str_ = str.arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
 		query->exec(str_);
@@ -257,6 +256,7 @@ void DBFasade::updateDataBase(QDate date_, double surPlus_)
 			surplus += incomingDB - expenseDB;
 			double result = surplus;
 			
+			query->clear();
 			QString strUpdate_ = strUpdate.arg(result).arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
 			query->exec(strUpdate_);
 		}	

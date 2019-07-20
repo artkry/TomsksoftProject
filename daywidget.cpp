@@ -8,7 +8,7 @@
 DayWidget::DayWidget(QDate date_)
 {
 	_sdb = new DBFasade;
-	this->_date = date_;
+	_date = date_;
 
 	_sdb->fillDayWidget(date_, _inComing, _expense, _surPlus);
 
@@ -43,12 +43,12 @@ void DayWidget::createFormLayout()
 
 void DayWidget::mousePressEvent(QMouseEvent *event) { emit clicked(this->_date); }
 
-void DayWidget::setDate(QDate date_) { this->_date = date_; }
-void DayWidget::setInComing(double inComing_) { this->_inComing = inComing_; }
-void DayWidget::setExpense(double expense_) { this->_expense = expense_; }
-void DayWidget::setSurPlus(double surPlus_) { this->_surPlus = surPlus_; }
+void DayWidget::setDate(QDate date_) { _date = date_; }
+void DayWidget::setInComing(double inComing_) { _inComing = inComing_; }
+void DayWidget::setExpense(double expense_) { _expense = expense_; }
+void DayWidget::setSurPlus(double surPlus_) { _surPlus = surPlus_; }
 
-QDate DayWidget::getDate() const { return this->_date; }
-double DayWidget::getInComing() const { return this->_inComing; }
-double DayWidget::getExpense() const { return this->_expense; }
-double DayWidget::getSurPlus() const { return this->_surPlus; }
+QDate DayWidget::getDate() const { return _date; }
+double DayWidget::getInComing() const { return _inComing; }
+double DayWidget::getExpense() const { return _expense; }
+double DayWidget::getSurPlus() const { return _surPlus; }
