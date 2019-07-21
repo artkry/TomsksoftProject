@@ -10,6 +10,8 @@
 EditForm::EditForm(QDate date_, QDialog *parent) : QDialog(parent)
 {
 	this->setGeometry(400, 150, 250, 170);
+	this->setFixedSize(250, 170);
+
 	_sdb = new DBFasade;
 	_buferDate = date_;
 

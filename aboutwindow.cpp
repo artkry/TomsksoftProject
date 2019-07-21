@@ -7,14 +7,14 @@
 AboutWindow::AboutWindow(QDialog *parent) : QDialog(parent)
 {
 	this->setGeometry(400, 150, 500, 300);
-	//this->setFixedSize(500, 300);
+
 	fillInfo();
 
 	QPushButton *acceptButton = new QPushButton(tr("OK"));
 
 	connect(acceptButton, SIGNAL(clicked()), this, SLOT(accept()));
 
-	QVBoxLayout *mainLayout = new QVBoxLayout;
+	QHBoxLayout *mainLayout = new QHBoxLayout;
 	mainLayout->addWidget(_aboutInfo, 0, Qt::AlignCenter);
 	mainLayout->addWidget(acceptButton, 0, Qt::AlignBottom | Qt::AlignRight);
 
@@ -38,4 +38,6 @@ void AboutWindow::fillInfo()
 	"расходы(когда захотим на какой день захотим), \n"
 	"поступления(когда захотим на какой день захотим), \n"
 	"а оно нам отображает, что будет происходить дальше согласно всем данным."));
+
+	_aboutInfo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 }

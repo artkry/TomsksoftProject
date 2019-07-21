@@ -6,7 +6,7 @@
 
 class DBFasade;
 class QVBoxLayout;
-class QGroupBox;
+class QGridLayout;
 
 class MainWindow :public QDialog
 {
@@ -28,9 +28,8 @@ protected:
 	void reRenderCalendar();
 
 	QDate _selectedDate;
-
+	QGridLayout *_calendarLayout;
 	QVBoxLayout *_mainLayout;
-	QGroupBox *_calendarGroupBox;
 	DBFasade *_sdb;
 };
 #endif // !MAINWINDOW_H

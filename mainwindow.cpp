@@ -23,11 +23,11 @@ MainWindow::MainWindow()
 
 	_selectedDate = QDate::currentDate();
 	
-	_mainLayout = new QVBoxLayout;
+	_mainLayout = new QVBoxLayout(this);
 	createMenu();
 	createHorizontalLayout();
 	createCalendarGroupBox();
-	_mainLayout->addWidget(_calendarGroupBox, 1, Qt::AlignCenter);
+	_mainLayout->addLayout(_calendarLayout);
 	setLayout(_mainLayout);
 
 	setWindowTitle("Home Accounting");
@@ -61,10 +61,11 @@ void MainWindow::createHorizontalLayout()
 	monthEdit->setDateRange(QDate(2010, 1, 1), QDate(2030, 1, 1));
 	monthEdit->setDate(_selectedDate);
 
+	monthEdit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	connect(monthEdit, SIGNAL(dateChanged(QDate)), this, SLOT(changeMonth(QDate)));
 
 	layout->addWidget(monthEdit);
-	layout->setSizeConstraint(QLayout::SetFixedSize);
+	//layout->setSizeConstraint(QLayout::SetFixedSize);
 	_mainLayout->addLayout(layout);
 }
 
@@ -72,16 +73,14 @@ void MainWindow::createCalendarGroupBox()
 {
 	QDate date(_selectedDate.year(), _selectedDate.month(), 1);
 
-	_calendarGroupBox = new QGroupBox;
-	//_calendarGroupBox->setFixedSize(900, 560);
-	QGridLayout *calendarLayout = new QGridLayout;
-	calendarLayout->setVerticalSpacing(0);
-	calendarLayout->setHorizontalSpacing(0);
-	calendarLayout->setSizeConstraint(QLayout::SetFixedSize);
+	_calendarLayout = new QGridLayout;
+	_calendarLayout->setVerticalSpacing(0);
+	_calendarLayout->setHorizontalSpacing(0);
+	_calendarLayout->setSizeConstraint(QLayout::SetFixedSize);
 
 	for (int weekDay = 0; weekDay < 7; ++weekDay) {
 		QLabel *weekDayName = new QLabel(QString("%1").arg(QDate::longDayName(weekDay + 1)));
-		calendarLayout->addWidget(weekDayName, 0, weekDay + 1, Qt::AlignCenter);
+		_calendarLayout->addWidget(weekDayName, 0, weekDay + 1, Qt::AlignCenter);
 	}
 
 	int weekNum = 1;
@@ -90,12 +89,15 @@ void MainWindow::createCalendarGroupBox()
 		DayWidget *day = new DayWidget(date);
 
 		connect(day, SIGNAL(clicked(QDate)), this, SLOT(makeChanges(QDate)));
-		calendarLayout->addWidget(day, weekNum, weekDay);
+		
+		_calendarLayout->addWidget(day, weekNum, weekDay);
+		_calendarLayout->setRowStretch(weekNum, 1);
+		
 		date = date.addDays(1);
 		if (weekDay == 7 && date.month() == _selectedDate.month()) { weekNum++; }
 	}
 
-	_calendarGroupBox->setLayout(calendarLayout);
+
 }
 
 void MainWindow::changeMonth(QDate date_)
@@ -107,15 +109,17 @@ void MainWindow::changeMonth(QDate date_)
 void MainWindow::reRenderCalendar()
 {
 	QLayoutItem *item;
-	item = _mainLayout->itemAt(1);
-	_mainLayout->removeItem(item);
-	_mainLayout->removeWidget(item->widget());
-	delete item->widget();
-	delete item;
+	while (item = _calendarLayout->itemAt(0)) {
+		_calendarLayout->removeItem(item);
+		_calendarLayout->removeWidget(item->widget());
+		delete item->widget();
+		delete item;
+	}
+	delete _calendarLayout;
 
 	createCalendarGroupBox();
 
-	_mainLayout->insertWidget(1, _calendarGroupBox);
+	_mainLayout->insertLayout(1, _calendarLayout);
 	_mainLayout->update();
 }
 
