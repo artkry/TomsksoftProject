@@ -4,7 +4,7 @@
 #include <QtSql>
 
 class QSqlDatabase;
-class QSqlQuery;
+//class QSqlQuery;
 
 class DBFasade
 {
@@ -23,8 +23,8 @@ protected:
 	void insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_);
 	void updateDataBase(QDate date_, double surPlus_);
 
-	static QSqlDatabase _sdb;
-	QSqlQuery *_query;
+	QSqlDatabase _sdb;
+	//QSqlQuery *_query;
 
 	QString _authLogin;
 	static int _authId;

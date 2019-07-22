@@ -1,20 +1,30 @@
 #include "dbfasade.h"
 
 int DBFasade::_authId = 0;
-QSqlDatabase DBFasade::_sdb = QSqlDatabase::addDatabase("QSQLITE");
+//QSqlDatabase DBFasade::_sdb = QSqlDatabase::addDatabase("QSQLITE");
 
 DBFasade::DBFasade()
 {
+	//if (_sdb.contains("sqlite")) {
+	//	_sdb = QSqlDatabase::database("sqlite");
+	//}
+	//else {
+	//	_sdb = QSqlDatabase::addDatabase("QSQLITE", "sqlite");
+	//	//_sdb.setDatabaseName("database.db");
+	//}
+	//_sdb.setDatabaseName("database.db");
+
+	_sdb = QSqlDatabase::addDatabase("QSQLITE");
 	_sdb.setDatabaseName("database.db");
 
 	if (!_sdb.open()) {
 		qDebug() << "Can't open DataBase (DBFasade constructor error)";
 	}
 
-	_query = new QSqlQuery(_sdb);
-
+	//_query = new QSqlQuery(_sdb);
+	QSqlQuery query;
 	if (!_sdb.tables().contains("Users")) {
-		_query->exec("CREATE TABLE Users ("
+		query.exec("CREATE TABLE Users ("
 			"id INTEGER PRIMARY KEY AUTOINCREMENT, "
 			"profile_name TEXT NOT NULL UNIQUE, "
 			"passwd TEXT NOT NULL"
@@ -23,7 +33,7 @@ DBFasade::DBFasade()
 	}
 
 	if (!_sdb.tables().contains("UsersData")) {
-		_query->exec("CREATE TABLE UsersData ("
+		query.exec("CREATE TABLE UsersData ("
 			"uid INTEGER, "
 			"dtime TEXT NOT NULL, "
 			"incoming REAL DEFAULT 0, "
@@ -38,12 +48,12 @@ DBFasade::DBFasade()
 
 DBFasade::~DBFasade()
 {
-	delete _query;
+	//delete _query;
 }
 
 bool DBFasade::authRequest(QString login, QString pass)
 {
-	_query->clear();
+	//_query->clear();
 
 	QSqlQuery query;
 	bool isCorrect;
@@ -77,13 +87,14 @@ bool DBFasade::authRequest(QString login, QString pass)
 
 bool DBFasade::createUser(QString login, QString pass)
 {
+	QSqlQuery query;
 	if (isCreated(login)) {
-		_query->clear();
+		//query.clear();
 		bool isCorrect;
 		QString str_ = "INSERT INTO Users (profile_name, passwd) VALUES ('%1','%2');";
 		QString str = str_.arg(login).arg(pass);
 
-		isCorrect = _query->exec(str);
+		isCorrect = query.exec(str);
 
 		if (!isCorrect) {
 			qDebug() << "Create User failed(DBFasade createUser)";
@@ -102,17 +113,17 @@ bool DBFasade::createUser(QString login, QString pass)
 
 bool DBFasade::isCreated(QString login)
 {
-	_query->clear();
-
+	//_query->clear();
+	QSqlQuery query;
 	bool isCorrect;
 	QString str_ = "SELECT id FROM Users WHERE Users.profile_name = '%1';";
 	QString str = str_.arg(login);
-	isCorrect = _query->exec(str);
+	isCorrect = query.exec(str);
 
-	QSqlRecord rec = _query->record();
-	_query->first();
+	QSqlRecord rec = query.record();
+	query.first();
 
-	if (_query->value(rec.indexOf("id")).toInt() != 0) {
+	if (query.value(rec.indexOf("id")).toInt() != 0) {
 		qDebug() << "This profile name is already exists! Try again.";
 		return false;
 	}
