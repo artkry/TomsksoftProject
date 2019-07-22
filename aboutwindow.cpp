@@ -1,4 +1,4 @@
-﻿#include "aboutwindow.h"
+#include "aboutwindow.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -7,7 +7,7 @@
 AboutWindow::AboutWindow(QDialog *parent) : QDialog(parent)
 {
 	this->setGeometry(400, 150, 500, 300);
-
+	
 	fillInfo();
 
 	QPushButton *acceptButton = new QPushButton(tr("OK"));
@@ -25,7 +25,7 @@ AboutWindow::~AboutWindow() {}
 
 void AboutWindow::fillInfo() 
 {
-	_aboutInfo = new QLabel(QObject::trUtf8("Описание:\n\t Программа для расчета и отображения"
+	_aboutInfo = new QLabel(QObject::trUtf8("Описание:\n\t Программа для расчета и отображения "
 		"предполагаемого остатка денег на некоторое время вперед.\n"
 		"Состав: \n\t -Экран заставка;\n\t"
 	"-Основная форма;\n\t"
@@ -33,7 +33,7 @@ void AboutWindow::fillInfo()
 	"-Подчиненная форма ввода данных;\n\t"
 	"-Окно с инструкцией;\n\t"
 	"-Окно About.\n"
-	"Бизнес-логика: \n\t"
+	"Бизнес-логика: \n"
 	"Интерфейс, в который заносим текущий остаток(когда захотим на какой день захотим),\n"
 	"расходы(когда захотим на какой день захотим), \n"
 	"поступления(когда захотим на какой день захотим), \n"

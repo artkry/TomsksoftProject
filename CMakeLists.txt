@@ -9,22 +9,22 @@ set(PROJECT_HEADERS
     mainwindow.h
     loginwindow.h
     registrationwindow.h
-    dbfasade.h
     daywidget.h
     editform.h
     aboutwindow.h
-    instructionwindow.h)
+    instructionwindow.h
+    dbsingleton.h)
 
 set(PROJECT_SOURCES
     mainwindow.cpp
     loginwindow.cpp
     registrationwindow.cpp
-    dbfasade.cpp
     main.cpp
     daywidget.cpp
     editform.cpp
     aboutwindow.cpp
-    instructionwindow.cpp)
+    instructionwindow.cpp
+    dbsingleton.cpp)
 
 
 qt5_add_resources(PROJECT_RESOURCES

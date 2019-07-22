@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QDate>
 
-class DBFasade;
 class QVBoxLayout;
 class QGridLayout;
 
@@ -30,6 +29,5 @@ protected:
 	QDate _selectedDate;
 	QGridLayout *_calendarLayout;
 	QVBoxLayout *_mainLayout;
-	DBFasade *_sdb;
 };
 #endif // !MAINWINDOW_H

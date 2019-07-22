@@ -1,5 +1,6 @@
 #include "registrationwindow.h"
-#include "dbfasade.h"
+//#include "dbfasade.h"
+#include "dbsingleton.h"
 #include "loginwindow.h"
 
 #include <QGroupBox>
@@ -17,7 +18,7 @@ RegistrationWindow::RegistrationWindow()
 	this->setGeometry(300, 100, 500, 350);
 	this->setFixedSize(500, 350);
 
-	_sdb = new DBFasade;
+	//_sdb = DBSingleton::getInstance();
 
 	_mainLayout = new QVBoxLayout;
 	createHorizontalLayout();
@@ -71,7 +72,9 @@ void RegistrationWindow::on_enterButton_clicked()
 {
 	if (this->_pass->text() == this->_confirmPass->text()) {
 
-		bool isCorrect = _sdb->createUser(this->_login->text(), this->_pass->text());
+		//bool isCorrect = _sdb->createUser(this->_login->text(), this->_pass->text());
+		bool isCorrect = DATABASE.createUser(this->_login->text(), this->_pass->text());
+
 
 		if (!isCorrect) {
 			qDebug() << "Registration is failed! Input correct data!";

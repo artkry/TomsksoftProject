@@ -3,7 +3,6 @@
 
 #include <QDialog>
 
-class DBFasade;
 class QLineEdit;
 class QVBoxLayout;
 class RegistrationWindow;
@@ -28,7 +27,6 @@ private:
 	QLineEdit *_login;
 	QLineEdit *_pass;
 
-	DBFasade *_sdb;
 	RegistrationWindow *_registrWindow;
 };
 #endif // !LOGINWINDOW_H

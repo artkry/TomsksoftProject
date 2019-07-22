@@ -5,7 +5,6 @@
 #include <QDate>
 
 class QVBoxLayout;
-class DBFasade;
 
 class DayWidget : public QWidget
 {
@@ -37,6 +36,5 @@ protected:
 	double _surPlus;
 
 	QVBoxLayout *_mainLayout;
-	DBFasade *_sdb;
 };
 #endif // !DAYWIDGET_H

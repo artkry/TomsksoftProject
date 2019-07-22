@@ -1,5 +1,5 @@
 #include "daywidget.h"
-#include "dbfasade.h"
+#include "dbsingleton.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -7,20 +7,17 @@
 
 DayWidget::DayWidget(QDate date_)
 {
-	_sdb = new DBFasade;
 	_date = date_;
 
-	_sdb->fillDayWidget(date_, _inComing, _expense, _surPlus);
+	//_sdb->fillDayWidget(date_, _inComing, _expense, _surPlus);
+	DATABASE.fillDayWidget(date_, _inComing, _expense, _surPlus);
 
 	_mainLayout = new QVBoxLayout;
 	createFormLayout();
 	setLayout(_mainLayout);
 }
 
-DayWidget::~DayWidget() 
-{
-	delete _sdb;
-}
+DayWidget::~DayWidget() {}
 
 void DayWidget::createFormLayout()
 {

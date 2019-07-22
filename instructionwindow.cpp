@@ -1,4 +1,4 @@
-﻿#include "instructionwindow.h"
+#include "instructionwindow.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>

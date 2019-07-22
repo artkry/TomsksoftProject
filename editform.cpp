@@ -1,5 +1,5 @@
 #include "editform.h"
-#include "dbfasade.h"
+#include "dbsingleton.h"
 
 #include <QVBoxLayout>
 #include <QFormLayout>
@@ -12,7 +12,6 @@ EditForm::EditForm(QDate date_, QDialog *parent) : QDialog(parent)
 	this->setGeometry(400, 150, 250, 170);
 	this->setFixedSize(250, 170);
 
-	_sdb = new DBFasade;
 	_buferDate = date_;
 
 	_inComing = new QLineEdit;
@@ -65,8 +64,8 @@ void EditForm::getDateData(QDate date_)
 	double inc = 0.0;
 	double exp = 0.0;
 	double sur = 0.0;
-	_sdb->getCurrentDateData(date_, inc, exp, sur);
-
+	//_sdb->getCurrentDateData(date_, inc, exp, sur);
+	DATABASE.getCurrentDateData(date_, inc, exp, sur);
 	setValues(inc, exp, sur);
 }
 
@@ -89,7 +88,7 @@ double EditForm::getSurPlus() const { return _surPlus->text().toDouble(); }
 
 void EditForm::recalcInComing(const QString &txt)
 {
-	double yesterdaySurplus = _sdb->getYesterdaySurplus(_buferDate);
+	double yesterdaySurplus = DATABASE.getYesterdaySurplus(_buferDate);
 	double inc = txt.toDouble();
 	double exp = this->_expense->text().toDouble();
 	double result = inc - exp + yesterdaySurplus;
@@ -101,7 +100,7 @@ void EditForm::recalcInComing(const QString &txt)
 
 void EditForm::recalcExpense(const QString &txt)
 {
-	double yesterdaySurplus = _sdb->getYesterdaySurplus(_buferDate);
+	double yesterdaySurplus = DATABASE.getYesterdaySurplus(_buferDate);
 	double exp = txt.toDouble();
 	double inc = this->_inComing->text().toDouble();
 	double result = inc - exp + yesterdaySurplus;

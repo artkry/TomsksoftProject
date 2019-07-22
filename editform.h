@@ -4,9 +4,7 @@
 #include <QDialog>
 #include <QDate>
 
-class DayWidget;
 class QLineEdit;
-class DBFasade;
 class QVBoxLayout;
 
 class EditForm : public QDialog
@@ -38,7 +36,5 @@ protected:
 	QLineEdit *_surPlus;
 	QVBoxLayout *_mainLayout;
 	QDate _buferDate;
-
-	DBFasade *_sdb;
 };
 #endif // !EDITFORM_H

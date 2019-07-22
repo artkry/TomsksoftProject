@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "dbfasade.h"
+#include "dbsingleton.h"
 #include "editform.h"
 #include "daywidget.h"
 #include "aboutwindow.h"
@@ -19,7 +19,7 @@ MainWindow::MainWindow()
 {
 	this->setGeometry(300, 100, 700, 500);
 
-	_sdb = new DBFasade;
+	//_sdb = new DBFasade;
 
 	_selectedDate = QDate::currentDate();
 	
@@ -65,7 +65,7 @@ void MainWindow::createHorizontalLayout()
 	connect(monthEdit, SIGNAL(dateChanged(QDate)), this, SLOT(changeMonth(QDate)));
 
 	layout->addWidget(monthEdit);
-	//layout->setSizeConstraint(QLayout::SetFixedSize);
+	
 	_mainLayout->addLayout(layout);
 }
 
@@ -131,7 +131,9 @@ void MainWindow::makeChanges(QDate date_)
 	case QDialog::Rejected:
 		break;
 	case QDialog::Accepted:
-		_sdb->updateDayWidgetData(date_, editform.getInComing(),
+		/*_sdb->updateDayWidgetData(date_, editform.getInComing(),
+			editform.getExpense(), editform.getSurPlus());*/
+		DATABASE.updateDayWidgetData(date_, editform.getInComing(),
 			editform.getExpense(), editform.getSurPlus());
 		reRenderCalendar();
 	default:

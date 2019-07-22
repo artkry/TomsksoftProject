@@ -1,5 +1,5 @@
 #include "loginwindow.h"
-#include "dbfasade.h"
+#include "dbsingleton.h"
 #include "registrationwindow.h"
 #include "mainwindow.h"
 
@@ -17,7 +17,7 @@ LoginWindow::LoginWindow()
 	this->setGeometry(300, 100, 500, 330);
 	this->setFixedSize(500, 330);
 
-	_sdb = new DBFasade;
+	//_sdb = DATABASE;
 
 	_mainLayout = new QVBoxLayout;
 	createHorizontalLayout();
@@ -66,7 +66,9 @@ void LoginWindow::createFormLayout()
 void LoginWindow::on_enterButton_clicked()
 {
 	if (!(this->_login->text() == "" || this->_pass->text() == "")) {
-		bool isCorrect = _sdb->authRequest(this->_login->text(), this->_pass->text());
+		//bool isCorrect = _sdb->authRequest(this->_login->text(), this->_pass->text());
+		bool isCorrect = DATABASE.authRequest(this->_login->text(), this->_pass->text());
+
 
 		if (!isCorrect) {
 			qDebug() << "Auth is failed! Input correct data!";
@@ -81,7 +83,6 @@ void LoginWindow::on_enterButton_clicked()
 	else {
 		qDebug() << "ZAPOLNITE POLYA !";
 	}
-
 }
 
 void LoginWindow::on_registrButton_clicked()

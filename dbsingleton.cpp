@@ -1,19 +1,25 @@
-#include "dbfasade.h"
+#include "dbsingleton.h"
 
-int DBFasade::_authId = 0;
-//QSqlDatabase DBFasade::_sdb = QSqlDatabase::addDatabase("QSQLITE");
+#include <QSqlDatabase>
 
-DBFasade::DBFasade()
+DBSingleton *DBSingleton::_instance = 0;
+DBSingletonDestroyer DBSingleton::_destroyer;
+
+DBSingletonDestroyer::~DBSingletonDestroyer() { delete _instance; }
+
+void DBSingletonDestroyer::init(DBSingleton *db) { _instance = db; }
+
+DBSingleton &DBSingleton::getInstance()
 {
-	//if (_sdb.contains("sqlite")) {
-	//	_sdb = QSqlDatabase::database("sqlite");
-	//}
-	//else {
-	//	_sdb = QSqlDatabase::addDatabase("QSQLITE", "sqlite");
-	//	//_sdb.setDatabaseName("database.db");
-	//}
-	//_sdb.setDatabaseName("database.db");
+	if (!_instance) {
+		_instance = new DBSingleton();
+		_destroyer.init(_instance);
+	}
+	return *_instance;
+}
 
+DBSingleton::DBSingleton() 
+{
 	_sdb = QSqlDatabase::addDatabase("QSQLITE");
 	_sdb.setDatabaseName("database.db");
 
@@ -21,8 +27,8 @@ DBFasade::DBFasade()
 		qDebug() << "Can't open DataBase (DBFasade constructor error)";
 	}
 
-	//_query = new QSqlQuery(_sdb);
 	QSqlQuery query;
+
 	if (!_sdb.tables().contains("Users")) {
 		query.exec("CREATE TABLE Users ("
 			"id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -46,20 +52,14 @@ DBFasade::DBFasade()
 
 }
 
-DBFasade::~DBFasade()
+bool DBSingleton::authRequest(QString login, QString pass) 
 {
-	//delete _query;
-}
-
-bool DBFasade::authRequest(QString login, QString pass)
-{
-	//_query->clear();
-
 	QSqlQuery query;
 	bool isCorrect;
+
 	QString str_ = "SELECT passwd, id FROM Users WHERE Users.profile_name LIKE '%1';";
 	QString str = str_.arg(login);
-	//isCorrect = _query->exec(str);
+
 	isCorrect = query.exec(str);
 	if (!isCorrect) {
 		qDebug() << "authRequest failed (DBFasade query)";
@@ -75,8 +75,6 @@ bool DBFasade::authRequest(QString login, QString pass)
 	if (query.value(rec.indexOf("passwd")).toString() == pass) {
 		_authLogin = login;
 		_authId = query.value(rec.indexOf("id")).toInt();
-		//qDebug() << authLogin;
-		//qDebug() << "authidrequest:" << _authId;
 		return true;
 	}
 	else {
@@ -85,11 +83,11 @@ bool DBFasade::authRequest(QString login, QString pass)
 	}
 }
 
-bool DBFasade::createUser(QString login, QString pass)
+bool DBSingleton::createUser(QString login, QString pass) 
 {
 	QSqlQuery query;
+
 	if (isCreated(login)) {
-		//query.clear();
 		bool isCorrect;
 		QString str_ = "INSERT INTO Users (profile_name, passwd) VALUES ('%1','%2');";
 		QString str = str_.arg(login).arg(pass);
@@ -108,14 +106,13 @@ bool DBFasade::createUser(QString login, QString pass)
 	else {
 		return false;
 	}
-
 }
 
-bool DBFasade::isCreated(QString login)
+bool DBSingleton::isCreated(QString login) 
 {
-	//_query->clear();
 	QSqlQuery query;
 	bool isCorrect;
+
 	QString str_ = "SELECT id FROM Users WHERE Users.profile_name = '%1';";
 	QString str = str_.arg(login);
 	isCorrect = query.exec(str);
@@ -133,9 +130,8 @@ bool DBFasade::isCreated(QString login)
 	}
 }
 
-void DBFasade::fillDayWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
+void DBSingleton::fillDayWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
 {
-	//_query->clear();
 	QSqlQuery query;
 	double yesterdaySurplus = getYesterdaySurplus(date_);
 
@@ -152,8 +148,6 @@ void DBFasade::fillDayWidget(QDate date_, double &inComing_, double &expense_, d
 	}
 
 	QSqlRecord rec = query.record();
-	//_query->isActive();
-	//_query->isSelect();
 
 	if (!query.first()) {
 		inComing_ = 0.0;
@@ -168,9 +162,68 @@ void DBFasade::fillDayWidget(QDate date_, double &inComing_, double &expense_, d
 	}
 }
 
-double DBFasade::getYesterdaySurplus(QDate date_)
+void DBSingleton::updateDayWidgetData(QDate date_, double inComing_, double expense_, double surPlus_) 
 {
+	double yesterdaySurplus = getYesterdaySurplus(date_);
+
 	//_query->clear();
+	QSqlQuery query;
+
+	QString str = "UPDATE UsersData "
+		"SET incoming = %1, "
+		"expense = %2, "
+		"surplus = %3 "
+		"WHERE UsersData.uid = %4 AND UsersData.dtime = '%5';";
+
+	double todaySurplus;
+	QString str_;
+	if (surPlus_ == 0.0) {
+		todaySurplus = yesterdaySurplus + inComing_ - expense_;
+		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
+	}
+	else {
+		//todaySurplus = surPlus_;
+		todaySurplus = yesterdaySurplus + inComing_ - expense_;
+		double trueSurplus = yesterdaySurplus + inComing_ - expense_;
+
+		//if (todaySurplus != trueSurplus) {
+		//	//РєР°Рє С‚Рѕ РѕР±РѕР·РЅР°С‡РёС‚СЊ
+		//}
+
+		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
+	}
+
+	bool isCorrect = query.exec(str_);
+
+	if (!isCorrect) {
+		qDebug() << "non correct update dbfasasde";
+	}
+	else {
+		qDebug() << "correct update dbfasasde";
+	}
+
+	updateDataBase(date_, todaySurplus);
+}
+
+void DBSingleton::getCurrentDateData(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
+{
+	QSqlQuery query;
+
+	QString str = "SELECT incoming, expense, surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
+	QString str_ = str.arg(date_.toString("yyyy.MM.dd")).arg(_authId);
+
+	bool isCorrect = query.exec(str_);
+
+	QSqlRecord rec = query.record();
+	query.first();
+
+	inComing_ = query.value(rec.indexOf("incoming")).toDouble();
+	expense_ = query.value(rec.indexOf("expense")).toDouble();
+	surPlus_ = query.value(rec.indexOf("surplus")).toDouble();
+}
+
+double DBSingleton::getYesterdaySurplus(QDate date_) 
+{
 	QSqlQuery query;
 	QDate yesterdayDate = date_.addDays(-1);
 	double yesterdaySurplus = 0.0;
@@ -198,90 +251,8 @@ double DBFasade::getYesterdaySurplus(QDate date_)
 	}
 }
 
-void DBFasade::updateDayWidgetData(QDate date_, double inComing_, double expense_, double surPlus_) 
+void DBSingleton::insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_) 
 {
-	double yesterdaySurplus = getYesterdaySurplus(date_);
-
-	//_query->clear();
-	QSqlQuery query;
-
-	QString str = "UPDATE UsersData "
-		"SET incoming = %1, "
-		"expense = %2, "
-		"surplus = %3 "
-		"WHERE UsersData.uid = %4 AND UsersData.dtime = '%5';";
-
-	double todaySurplus;
-	QString str_;
-	if (surPlus_ == 0.0) {
-		todaySurplus = yesterdaySurplus + inComing_ - expense_;
-		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
-	}
-	else {
-		//todaySurplus = surPlus_;
-		todaySurplus = yesterdaySurplus + inComing_ - expense_;
-		double trueSurplus = yesterdaySurplus + inComing_ - expense_;
-
-		//if (todaySurplus != trueSurplus) {
-		//	//как то обозначить
-		//}
-
-		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
-	}
-
-	bool isCorrect = query.exec(str_);
-
-	if (!isCorrect) {
-		qDebug() << "non correct update dbfasasde";
-	}
-	else {
-		qDebug() << "correct update dbfasasde";
-	}
-
-	updateDataBase(date_, todaySurplus);
-}
-
-void DBFasade::updateDataBase(QDate date_, double surPlus_)
-{
-	double surplus = surPlus_;
-	QDate currentDate = date_;
-	//QSqlQuery *query = new QSqlQuery(_sdb);
-	//QSqlQuery *queryUpdate = new QSqlQuery(_sdb);
-	QSqlQuery query;
-
-	QString str = "SELECT incoming, expense FROM UsersData WHERE UsersData.uid = %1 AND UsersData.dtime = '%2';";
-	QString strUpdate = "UPDATE UsersData "
-		"SET surplus = %1 "
-		"WHERE UsersData.uid = %2 AND UsersData.dtime = '%3';";
-
-	while (true) {
-		query.clear();
-		currentDate = currentDate.addDays(1);
-		QString str_ = str.arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
-		query.exec(str_);
-		QSqlRecord rec = query.record();
-		//query->isActive();
-		//query->isSelect();
-		if (!query.first()) {
-			break;
-		}
-		else {
-			double incomingDB = query.value(rec.indexOf("incoming")).toDouble();
-			double expenseDB = query.value(rec.indexOf("expense")).toDouble();
-			surplus += incomingDB - expenseDB;
-			double result = surplus;
-			
-			query.clear();
-			QString strUpdate_ = strUpdate.arg(result).arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
-			query.exec(strUpdate_);
-		}	
-	}
-}
-
-void DBFasade::insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_) 
-{
-	//QSqlQuery *query = new QSqlQuery(_sdb);
-	//_query->clear();
 	QSqlQuery query;
 	QString str = "INSERT INTO UsersData (uid, dtime, incoming, expense, surplus)"
 		"VALUES(%1, '%2', %3, %4, %5)";
@@ -297,21 +268,45 @@ void DBFasade::insertThisWidget(QDate date_, double inComing_, double expense_, 
 	}
 }
 
-void DBFasade::getCurrentDateData(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
+void DBSingleton::updateDataBase(QDate date_, double surPlus_) 
 {
-	//QSqlQuery *query = new QSqlQuery(_sdb);
-	//_query->clear();
+	double surplus = surPlus_;
+	QDate currentDate = date_;
 	QSqlQuery query;
 
-	QString str = "SELECT incoming, expense, surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
-	QString str_ = str.arg(date_.toString("yyyy.MM.dd")).arg(_authId);
+	QString str = "SELECT incoming, expense FROM UsersData WHERE UsersData.uid = %1 AND UsersData.dtime = '%2';";
+	QString strUpdate = "UPDATE UsersData "
+		"SET surplus = %1 "
+		"WHERE UsersData.uid = %2 AND UsersData.dtime = '%3';";
 
-	bool isCorrect = query.exec(str_);
+	while (true) {
+		query.clear();
+		currentDate = currentDate.addDays(1);
+		QString str_ = str.arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
+		query.exec(str_);
+		QSqlRecord rec = query.record();
 
-	QSqlRecord rec = query.record();
-	query.first();
+		if (!query.first()) {
+			break;
+		}
+		else {
+			double incomingDB = query.value(rec.indexOf("incoming")).toDouble();
+			double expenseDB = query.value(rec.indexOf("expense")).toDouble();
+			surplus += incomingDB - expenseDB;
+			double result = surplus;
 
-	inComing_ = query.value(rec.indexOf("incoming")).toDouble();
-	expense_ = query.value(rec.indexOf("expense")).toDouble();
-	surPlus_ = query.value(rec.indexOf("surplus")).toDouble();
+			query.clear();
+			QString strUpdate_ = strUpdate.arg(result).arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
+			query.exec(strUpdate_);
+		}
+	}
 }
+
+void  DBSingleton::setAuthId(int id) { _authId = id; }
+
+int  DBSingleton::getAuthId() const { return _authId; }
+
+void  DBSingleton::setAuthLogin(QString login) { _authLogin = login; }
+
+QString  DBSingleton::getAuthLogin() const { return _authLogin; }
+
