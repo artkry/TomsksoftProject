@@ -19,8 +19,6 @@ MainWindow::MainWindow()
 {
 	this->setGeometry(300, 100, 700, 500);
 
-	//_sdb = new DBFasade;
-
 	_selectedDate = QDate::currentDate();
 	
 	_mainLayout = new QVBoxLayout(this);
@@ -72,6 +70,7 @@ void MainWindow::createHorizontalLayout()
 void MainWindow::createCalendarGroupBox()
 {
 	QDate date(_selectedDate.year(), _selectedDate.month(), 1);
+	DATABASE.fillThisMonth(date);
 
 	_calendarLayout = new QGridLayout;
 	_calendarLayout->setVerticalSpacing(0);
@@ -131,9 +130,9 @@ void MainWindow::makeChanges(QDate date_)
 	case QDialog::Rejected:
 		break;
 	case QDialog::Accepted:
-		/*_sdb->updateDayWidgetData(date_, editform.getInComing(),
+		/*DATABASE.updateDayWidgetData(date_, editform.getInComing(),
 			editform.getExpense(), editform.getSurPlus());*/
-		DATABASE.updateDayWidgetData(date_, editform.getInComing(),
+		DATABASE.updateThisMonth(date_, editform.getInComing(),
 			editform.getExpense(), editform.getSurPlus());
 		reRenderCalendar();
 	default:

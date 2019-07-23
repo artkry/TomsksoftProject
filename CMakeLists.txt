@@ -44,3 +44,5 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Gui
     Qt5::Sql)
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)

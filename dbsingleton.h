@@ -19,19 +19,16 @@ class DBSingleton
 {
 public:
 	static DBSingleton &getInstance();
-
+	//функции системы логин
 	bool authRequest(QString login, QString pass);
 	bool createUser(QString login, QString pass);
-	void fillDayWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_);
-	void updateDayWidgetData(QDate date_, double inComing_, double expense_, double surPlus_);
+	//функции, связанные с расчетами и заполнением
+	void fillThisMonth(QDate date_);
+	void fillWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_);
+	void updateThisMonth(QDate date_, double inComing_, double expense_, double surPlus_);
+	//функции для editform
+	double getYesterdaySurplusFromBufer(QDate date_);
 	void getCurrentDateData(QDate date_, double &inComing_, double &expense_, double &surPlus_);
-	double getYesterdaySurplus(QDate date_);
-
-	void setAuthId(int id);
-	int getAuthId() const;
-
-	void setAuthLogin(QString login);
-	QString getAuthLogin() const;
 
 protected:
 	DBSingleton();
@@ -40,17 +37,36 @@ protected:
 	DBSingleton &operator=(DBSingleton&);
 	friend class DBSingletonDestroyer;
 
-	void insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_);
-	void updateDataBase(QDate date_, double surPlus_);
+	//второстепенные функции для расчетов и регистрации
 	bool isCreated(QString login);
+	double getPreviosMonthSurplus(QDate date_);
+	void setCurrentMonthSurPlus(QDate date_, double surPlus_);
+
 private:
 	static DBSingleton *_instance;
 	static DBSingletonDestroyer _destroyer;
 
+	struct dayStruct
+	{
+		QString s_dtime;
+		double s_incoming;
+		double s_expense;
+		double s_surplus;
+	};
+
+	struct monthStruct
+	{
+		int s_year;
+		int s_month;
+		double s_monthSurplus;
+	};
+
+	QList <dayStruct> monthBufer;
+	QList <monthStruct> surplusBufer;
+
 	QSqlDatabase _sdb;
 
 	int _authId;
-	QString _authLogin;
 };
 
 #define DATABASE DBSingleton::getInstance()

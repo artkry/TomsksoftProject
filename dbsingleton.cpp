@@ -46,10 +46,10 @@ DBSingleton::DBSingleton()
 			"expense REAL DEFAULT 0, "
 			"surplus REAL, "
 			"FOREIGN KEY (uid) REFERENCES Users(id)"
+			"PRIMARY KEY (uid, dtime)"
 			");"
 		);
 	}
-
 }
 
 bool DBSingleton::authRequest(QString login, QString pass) 
@@ -73,7 +73,6 @@ bool DBSingleton::authRequest(QString login, QString pass)
 	query.first();
 
 	if (query.value(rec.indexOf("passwd")).toString() == pass) {
-		_authLogin = login;
 		_authId = query.value(rec.indexOf("id")).toInt();
 		return true;
 	}
@@ -130,183 +129,184 @@ bool DBSingleton::isCreated(QString login)
 	}
 }
 
-void DBSingleton::fillDayWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
-{
-	QSqlQuery query;
-	double yesterdaySurplus = getYesterdaySurplus(date_);
-
-	QString str = "SELECT incoming, expense FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
-	QString str_ = str.arg(date_.toString("yyyy.MM.dd")).arg(_authId);
-
-	bool isCorrect = query.exec(str_);
-
-	if (!isCorrect) {
-		qDebug() << "fill query not ok dbfasade";
-	}
-	else {
-		qDebug() << "fill query ok dbfasade";
-	}
-
-	QSqlRecord rec = query.record();
-
-	if (!query.first()) {
-		inComing_ = 0.0;
-		expense_ = 0.0;
-		surPlus_ = yesterdaySurplus;
-		insertThisWidget(date_, 0.0, 0.0, yesterdaySurplus);
-	}
-	else {
-		inComing_ = query.value(rec.indexOf("incoming")).toDouble();
-		expense_ = query.value(rec.indexOf("expense")).toDouble();
-		surPlus_ = yesterdaySurplus + inComing_ - expense_;
-	}
-}
-
-void DBSingleton::updateDayWidgetData(QDate date_, double inComing_, double expense_, double surPlus_) 
-{
-	double yesterdaySurplus = getYesterdaySurplus(date_);
-
-	//_query->clear();
-	QSqlQuery query;
-
-	QString str = "UPDATE UsersData "
-		"SET incoming = %1, "
-		"expense = %2, "
-		"surplus = %3 "
-		"WHERE UsersData.uid = %4 AND UsersData.dtime = '%5';";
-
-	double todaySurplus;
-	QString str_;
-	if (surPlus_ == 0.0) {
-		todaySurplus = yesterdaySurplus + inComing_ - expense_;
-		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
-	}
-	else {
-		//todaySurplus = surPlus_;
-		todaySurplus = yesterdaySurplus + inComing_ - expense_;
-		double trueSurplus = yesterdaySurplus + inComing_ - expense_;
-
-		//if (todaySurplus != trueSurplus) {
-		//	//РєР°Рє С‚Рѕ РѕР±РѕР·РЅР°С‡РёС‚СЊ
-		//}
-
-		str_ = str.arg(inComing_).arg(expense_).arg(todaySurplus).arg(_authId).arg(date_.toString("yyyy.MM.dd"));
-	}
-
-	bool isCorrect = query.exec(str_);
-
-	if (!isCorrect) {
-		qDebug() << "non correct update dbfasasde";
-	}
-	else {
-		qDebug() << "correct update dbfasasde";
-	}
-
-	updateDataBase(date_, todaySurplus);
-}
-
 void DBSingleton::getCurrentDateData(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
 {
-	QSqlQuery query;
-
-	QString str = "SELECT incoming, expense, surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
-	QString str_ = str.arg(date_.toString("yyyy.MM.dd")).arg(_authId);
-
-	bool isCorrect = query.exec(str_);
-
-	QSqlRecord rec = query.record();
-	query.first();
-
-	inComing_ = query.value(rec.indexOf("incoming")).toDouble();
-	expense_ = query.value(rec.indexOf("expense")).toDouble();
-	surPlus_ = query.value(rec.indexOf("surplus")).toDouble();
-}
-
-double DBSingleton::getYesterdaySurplus(QDate date_) 
-{
-	QSqlQuery query;
-	QDate yesterdayDate = date_.addDays(-1);
-	double yesterdaySurplus = 0.0;
-
-	QString str = "SELECT surplus FROM UsersData WHERE UsersData.dtime = '%1' AND UsersData.uid = %2;";
-	QString str_ = str.arg(yesterdayDate.toString("yyyy.MM.dd")).arg(_authId);
-
-	bool isCorrect = query.exec(str_);
-
-	if (!isCorrect) {
-		qDebug() << "yesterdaydate isn't correct dbfasade";
-		//return -1;
-	}
-	else {
-		qDebug() << "yesterdaydate is correct dbfasade";
-	}
-
-	QSqlRecord rec = query.record();
-
-	if (!query.first()) {
-		return yesterdaySurplus;
-	}
-	else {
-		return yesterdaySurplus = query.value(rec.indexOf("surplus")).toDouble();
-	}
-}
-
-void DBSingleton::insertThisWidget(QDate date_, double inComing_, double expense_, double surPlus_) 
-{
-	QSqlQuery query;
-	QString str = "INSERT INTO UsersData (uid, dtime, incoming, expense, surplus)"
-		"VALUES(%1, '%2', %3, %4, %5)";
-	QString str_ = str.arg(_authId).arg(date_.toString("yyyy.MM.dd")).arg(inComing_).arg(expense_).arg(surPlus_);
-
-	bool isCorrect = query.exec(str_);
-
-	if (!isCorrect) {
-		qDebug() << "query non correct insertDW";
-	}
-	else {
-		qDebug() << "query correct insertDW";
-	}
-}
-
-void DBSingleton::updateDataBase(QDate date_, double surPlus_) 
-{
-	double surplus = surPlus_;
-	QDate currentDate = date_;
-	QSqlQuery query;
-
-	QString str = "SELECT incoming, expense FROM UsersData WHERE UsersData.uid = %1 AND UsersData.dtime = '%2';";
-	QString strUpdate = "UPDATE UsersData "
-		"SET surplus = %1 "
-		"WHERE UsersData.uid = %2 AND UsersData.dtime = '%3';";
-
-	while (true) {
-		query.clear();
-		currentDate = currentDate.addDays(1);
-		QString str_ = str.arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
-		query.exec(str_);
-		QSqlRecord rec = query.record();
-
-		if (!query.first()) {
+	QList<dayStruct>::iterator count;
+	for (count = monthBufer.begin(); count != monthBufer.end(); ++count) {
+		if (count->s_dtime == date_.toString("yyyy.MM.dd")) {
+			inComing_ = count->s_incoming;
+			expense_ = count->s_expense;
+			surPlus_ = count->s_surplus;
 			break;
 		}
-		else {
-			double incomingDB = query.value(rec.indexOf("incoming")).toDouble();
-			double expenseDB = query.value(rec.indexOf("expense")).toDouble();
-			surplus += incomingDB - expenseDB;
-			double result = surplus;
+	}
+}
 
-			query.clear();
-			QString strUpdate_ = strUpdate.arg(result).arg(_authId).arg(currentDate.toString("yyyy.MM.dd"));
-			query.exec(strUpdate_);
+double DBSingleton::getYesterdaySurplusFromBufer(QDate date_) 
+{
+	QDate yesterdayDate = date_.addDays(-1);
+	QList<dayStruct>::iterator count;
+
+	for (count = monthBufer.begin(); count != monthBufer.end(); ++count) {
+		if (count->s_dtime == yesterdayDate.toString("yyyy.MM.dd")) {
+			return count->s_surplus;
+			break;
 		}
 	}
 }
 
-void  DBSingleton::setAuthId(int id) { _authId = id; }
+void DBSingleton::fillThisMonth(QDate date_) 
+{
+	monthBufer.clear();
 
-int  DBSingleton::getAuthId() const { return _authId; }
+	QString str = "SELECT dtime, incoming, expense, surplus FROM UsersData WHERE UsersData.uid = %1 AND UsersData.dtime LIKE '%2';";
+	QString str_ = str.arg(_authId).arg(date_.toString("yyyy.MM") + "%");
 
-void  DBSingleton::setAuthLogin(QString login) { _authLogin = login; }
+	QSqlQuery query;
+	query.exec(str_);
 
-QString  DBSingleton::getAuthLogin() const { return _authLogin; }
+	QSqlRecord rec = query.record();
+
+	double previosMonthSurplus = getPreviosMonthSurplus(date_);
+	qDebug() << "prev monthsurplus" << previosMonthSurplus;
+
+	if (!query.first()) {
+		int monthCount = date_.daysInMonth();
+		QDate dtime = date_;
+		qDebug() << "takogo dnya net";
+		for (int i = 0; i < monthCount; i++) {
+			dayStruct day;
+			day.s_dtime = dtime.toString("yyyy.MM.dd");
+			day.s_incoming = 0.0;
+			day.s_expense = 0.0;
+			day.s_surplus = previosMonthSurplus;
+
+			monthBufer.append(day);
+			dtime = dtime.addDays(1);
+		}
+
+	}
+	else {
+		query.previous();
+		while (query.next()) {
+			dayStruct day;
+			day.s_dtime = query.value(rec.indexOf("dtime")).toString();
+			day.s_incoming = query.value(rec.indexOf("incoming")).toDouble();
+			day.s_expense = query.value(rec.indexOf("expense")).toDouble();
+			previosMonthSurplus += day.s_incoming - day.s_expense;
+			day.s_surplus = previosMonthSurplus;
+			
+			monthBufer.append(day);
+			qDebug() << "takoi den est" << day.s_dtime;
+		}
+
+	}
+	qDebug() << "ostatok mesyaca: " << previosMonthSurplus;
+	setCurrentMonthSurPlus(date_, previosMonthSurplus);
+}
+
+void DBSingleton::fillWidget(QDate date_, double &inComing_, double &expense_, double &surPlus_) 
+{
+	QList<dayStruct>::iterator count;
+
+	for (count = monthBufer.begin(); count != monthBufer.end(); ++count) {
+		if (count->s_dtime == date_.toString("yyyy.MM.dd")) {
+			inComing_ = count->s_incoming;
+			expense_ = count->s_expense;
+			surPlus_ = count->s_surplus;
+			qDebug() << "fill widget for " << count->s_dtime << "  date";
+			break;
+		}
+	}
+}
+
+void DBSingleton::updateThisMonth(QDate date_, double inComing_, double expense_, double surPlus_)
+{
+	QList <dayStruct>::iterator countF;
+	QList <dayStruct>::iterator countS;
+
+	double yesterdaySurplus = getYesterdaySurplusFromBufer(date_);
+
+	qDebug() << "prev day ost: " << yesterdaySurplus;
+	for (countF = monthBufer.begin(); countF != monthBufer.end(); ++countF) {
+		if (countF->s_dtime == date_.toString("yyyy.MM.dd")) {
+			countF->s_incoming = inComing_;
+			countF->s_expense = expense_;
+			countF->s_surplus = yesterdaySurplus + inComing_ - expense_;
+			yesterdaySurplus = countF->s_surplus;
+			qDebug() << countF->s_dtime <<" day ost: " << yesterdaySurplus;
+			break;
+		}
+	}
+
+	for (countS = ++countF; countS != monthBufer.end(); ++countS) {
+		countS->s_surplus = yesterdaySurplus + countS->s_incoming - countS->s_expense;
+		yesterdaySurplus = countS->s_surplus;
+	}
+    
+
+	QString str = "REPLACE INTO UsersData(uid, dtime, incoming, expense, surplus)"
+		"VALUES(%1, '%2', %3, %4, %5)";
+	QList <dayStruct>::iterator countT;
+
+	QSqlQuery query;
+	//query.exec() выполняется в среднем 100-120мс из-за за этого пролагивает при обновлении
+	for (countT = monthBufer.begin(); countT != monthBufer.end(); ++countT) {
+		QString str_ = str.arg(_authId).arg(countT->s_dtime).arg(countT->s_incoming).arg(countT->s_expense).arg(countT->s_surplus);
+		query.exec(str_);
+		query.clear();
+	}
+}
+
+double DBSingleton::getPreviosMonthSurplus(QDate date_)  
+{
+	QDate prevMonthDate = date_.addMonths(-1);
+	qDebug() << "GPMS: " << prevMonthDate;
+	double previosMonthSurplus = 0.0;
+	if (surplusBufer.isEmpty()) {
+		return previosMonthSurplus;
+	}
+	else {
+		QList<monthStruct>::iterator count;
+		for (count = surplusBufer.begin(); count != surplusBufer.end(); ++count) {
+			if (count->s_month == prevMonthDate.month() && count->s_year == prevMonthDate.year()) {
+				previosMonthSurplus = count->s_monthSurplus;
+				break;
+			}
+		}
+	}
+
+	return previosMonthSurplus;
+}
+
+void DBSingleton::setCurrentMonthSurPlus(QDate date_, double surPlus_) 
+{
+	monthStruct item;
+	
+	item.s_year = date_.year();
+	item.s_month = date_.month();
+	item.s_monthSurplus = surPlus_;
+
+	surplusBufer.append(item);
+
+	if (surplusBufer.isEmpty()) 
+	{
+		monthStruct item;
+
+		item.s_year = date_.year();
+		item.s_month = date_.month();
+		item.s_monthSurplus = surPlus_;
+
+		surplusBufer.append(item);
+	}
+	else {
+		QList <monthStruct>::iterator count;
+		for (count = surplusBufer.begin(); count != surplusBufer.end(); ++count) {
+			if (count->s_month == date_.month() && count->s_year == date_.year()) {
+				count->s_monthSurplus = surPlus_;
+				break;
+			}
+		}
+	}
+}
 

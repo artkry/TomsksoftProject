@@ -64,7 +64,7 @@ void EditForm::getDateData(QDate date_)
 	double inc = 0.0;
 	double exp = 0.0;
 	double sur = 0.0;
-	//_sdb->getCurrentDateData(date_, inc, exp, sur);
+
 	DATABASE.getCurrentDateData(date_, inc, exp, sur);
 	setValues(inc, exp, sur);
 }
@@ -88,7 +88,7 @@ double EditForm::getSurPlus() const { return _surPlus->text().toDouble(); }
 
 void EditForm::recalcInComing(const QString &txt)
 {
-	double yesterdaySurplus = DATABASE.getYesterdaySurplus(_buferDate);
+	double yesterdaySurplus = DATABASE.getYesterdaySurplusFromBufer(_buferDate);
 	double inc = txt.toDouble();
 	double exp = this->_expense->text().toDouble();
 	double result = inc - exp + yesterdaySurplus;
@@ -100,7 +100,7 @@ void EditForm::recalcInComing(const QString &txt)
 
 void EditForm::recalcExpense(const QString &txt)
 {
-	double yesterdaySurplus = DATABASE.getYesterdaySurplus(_buferDate);
+	double yesterdaySurplus = DATABASE.getYesterdaySurplusFromBufer(_buferDate);
 	double exp = txt.toDouble();
 	double inc = this->_inComing->text().toDouble();
 	double result = inc - exp + yesterdaySurplus;
