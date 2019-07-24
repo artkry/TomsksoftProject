@@ -4,6 +4,7 @@
 #include "daywidget.h"
 #include "aboutwindow.h"
 #include "instructionwindow.h"
+#include "calendarwidget.h"
 
 #include <QMenuBar>
 #include <QMenu>
@@ -13,7 +14,7 @@
 #include <QVBoxLayout>
 #include <QDateTimeEdit>
 #include <QDate>
-#include <QGroupBox>
+#include <QPainter>
 
 MainWindow::MainWindow() 
 {
@@ -23,7 +24,7 @@ MainWindow::MainWindow()
 	
 	_mainLayout = new QVBoxLayout(this);
 	createMenu();
-	createHorizontalLayout();
+	createMonthMenu();
 	createCalendarGroupBox();
 	_mainLayout->addLayout(_calendarLayout);
 	setLayout(_mainLayout);
@@ -51,19 +52,33 @@ void MainWindow::createMenu()
 	_mainLayout->setMenuBar(menuBar);
 }
 
-void MainWindow::createHorizontalLayout()
+void MainWindow::createMonthMenu() 
 {
 	QHBoxLayout *layout = new QHBoxLayout;
-	QDateTimeEdit *monthEdit = new QDateTimeEdit;
-	monthEdit->setDisplayFormat("MMMM yyyy");
-	monthEdit->setDateRange(QDate(2010, 1, 1), QDate(2030, 1, 1));
-	monthEdit->setDate(_selectedDate);
+	_currentDateLabel = new QLabel(_selectedDate.toString("MMMM yyyy"));
+	_currentDateLabel->setAlignment(Qt::AlignCenter);
 
-	monthEdit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-	connect(monthEdit, SIGNAL(dateChanged(QDate)), this, SLOT(changeMonth(QDate)));
+	QPixmap l_Icon(":ArrowLeft.png");
+	QPixmap r_Icon(":ArrowRight.png");
 
-	layout->addWidget(monthEdit);
-	
+	QPushButton *nextMonth = new QPushButton;
+	QPushButton *previosMonth = new QPushButton;
+	nextMonth->setIcon(QIcon(r_Icon));
+	nextMonth->setIconSize(r_Icon.size());
+	nextMonth->setFixedSize(85, 50);
+	previosMonth->setIcon(QIcon(l_Icon));
+	previosMonth->setIconSize(l_Icon.size());
+	previosMonth->setFixedSize(85, 50);
+
+	connect(nextMonth, SIGNAL(clicked()), this, SLOT(addMonth()));
+	connect(previosMonth, SIGNAL(clicked()), this, SLOT(subMonth()));
+
+	layout->addWidget(previosMonth);
+	layout->addStretch();
+	layout->addWidget(_currentDateLabel, Qt::AlignCenter);
+	layout->addStretch();
+	layout->addWidget(nextMonth);
+
 	_mainLayout->addLayout(layout);
 }
 
@@ -99,9 +114,17 @@ void MainWindow::createCalendarGroupBox()
 
 }
 
-void MainWindow::changeMonth(QDate date_)
+void MainWindow::addMonth() 
 {
-	_selectedDate = QDate(date_.year(), date_.month(), _selectedDate.day());
+	_selectedDate = _selectedDate.addMonths(1);
+	_currentDateLabel->setText(_selectedDate.toString("MMMM yyyy"));
+	reRenderCalendar();
+}
+
+void MainWindow::subMonth() 
+{
+	_selectedDate = _selectedDate.addMonths(-1);
+	_currentDateLabel->setText(_selectedDate.toString("MMMM yyyy"));
 	reRenderCalendar();
 }
 
@@ -130,8 +153,6 @@ void MainWindow::makeChanges(QDate date_)
 	case QDialog::Rejected:
 		break;
 	case QDialog::Accepted:
-		/*DATABASE.updateDayWidgetData(date_, editform.getInComing(),
-			editform.getExpense(), editform.getSurPlus());*/
 		DATABASE.updateThisMonth(date_, editform.getInComing(),
 			editform.getExpense(), editform.getSurPlus());
 		reRenderCalendar();

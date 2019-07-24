@@ -6,6 +6,7 @@
 
 class QVBoxLayout;
 class QGridLayout;
+class QLabel;
 
 class MainWindow :public QDialog
 {
@@ -15,19 +16,24 @@ public:
 	MainWindow();
 	~MainWindow();
 private slots:
-	void changeMonth(QDate date_);
+	//void changeMonth(QDate date_);
 	void makeChanges(QDate date_);
 	void aboutAction();
 	void instructAction();
 
+	void addMonth();
+	void subMonth();
+
 protected:
 	void createMenu();
-	void createHorizontalLayout();
 	void createCalendarGroupBox();
 	void reRenderCalendar();
 
+	void createMonthMenu();
+
 	QDate _selectedDate;
 	QGridLayout *_calendarLayout;
+	QLabel *_currentDateLabel;
 	QVBoxLayout *_mainLayout;
 };
 #endif // !MAINWINDOW_H

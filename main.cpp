@@ -5,6 +5,7 @@
 #include <QLabel>
 
 #include "loginwindow.h"
+#include "dbsingleton.h"
 
 static const int  LOAD_TIME_MSEC = 3 * 1000;
 static const int  PROGRESS_X_PX = 262;

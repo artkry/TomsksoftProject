@@ -13,7 +13,8 @@ set(PROJECT_HEADERS
     editform.h
     aboutwindow.h
     instructionwindow.h
-    dbsingleton.h)
+    dbsingleton.h
+    calendarwidget.h)
 
 set(PROJECT_SOURCES
     mainwindow.cpp
@@ -24,7 +25,8 @@ set(PROJECT_SOURCES
     editform.cpp
     aboutwindow.cpp
     instructionwindow.cpp
-    dbsingleton.cpp)
+    dbsingleton.cpp
+    calendarwidget.cpp)
 
 
 qt5_add_resources(PROJECT_RESOURCES
@@ -44,5 +46,3 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Gui
     Qt5::Sql)
-
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
