@@ -1,92 +1,50 @@
 #include "daywidget.h"
+#include "dbsingleton.h"
 
 #include <QLabel>
-#include <QDate>
 #include <QVBoxLayout>
-#include <QGroupBox>
 #include <QFormLayout>
 
-DayWidget::DayWidget(QString date_, double inComing_, double expense_, double surPlus_)
+DayWidget::DayWidget(QDate date_)
 {
-	setDate(date_);
+	_date = date_;
 
-	this->inComing = inComing_;
-	this->expense = expense_;
-	this->surPlus = surPlus_;
+	DATABASE.fillWidget(date_, _inComing, _expense, _surPlus);
 
-	createFormGroupBox();
-
-	mainLayout = new QVBoxLayout;
-	mainLayout->addWidget(formGroupBox);
-	setLayout(mainLayout);
+	_mainLayout = new QVBoxLayout;
+	createFormLayout();
+	setLayout(_mainLayout);
 }
 
-DayWidget::~DayWidget() 
-{
-	//delete &date;
-	delete formGroupBox;
-}
+DayWidget::~DayWidget() {}
 
-void DayWidget::createFormGroupBox()
+void DayWidget::createFormLayout()
 {
 	QLabel *inComLabel = new QLabel;
-	inComLabel->setText(QString::number(this->inComing, 'f', 1));
+	inComLabel->setText(QString::number(_inComing, 'f', 1));
 	QLabel *expenseLabel = new QLabel;
-	expenseLabel->setText(QString::number(this->expense, 'f', 1));
+	expenseLabel->setText(QString::number(_expense, 'f', 1));
 	QLabel *surPlusLabel = new QLabel;
-	surPlusLabel->setText(QString::number(this->surPlus, 'f', 1));
+	surPlusLabel->setText(QString::number(_surPlus, 'f', 1));
 
-	
-	formGroupBox = new QGroupBox;
 	QFormLayout *layout = new QFormLayout;
-
-	layout->addRow(new QLabel(tr("Date: ")), new QLabel(this->date));
+	
+	layout->addRow(new QLabel(tr("Date: ")), new QLabel(_date.toString("dd.MM.yyyy")));
 	layout->addRow(new QLabel(tr("Prihod: ")), inComLabel);
 	layout->addRow(new QLabel(tr("Rashod: ")), expenseLabel);
 	layout->addRow(new QLabel(tr("Ostatok: ")), surPlusLabel);
 
-	formGroupBox->setLayout(layout);
+	_mainLayout->addLayout(layout);
 }
 
-void DayWidget::mousePressEvent(QMouseEvent *event) { emit clicked(this->date); }
+void DayWidget::mousePressEvent(QMouseEvent *event) { emit clicked(_date); }
 
-void DayWidget::setDate(QString date_) { this->date = date_; }
+void DayWidget::setDate(QDate date_) { _date = date_; }
+void DayWidget::setInComing(double inComing_) { _inComing = inComing_; }
+void DayWidget::setExpense(double expense_) { _expense = expense_; }
+void DayWidget::setSurPlus(double surPlus_) { _surPlus = surPlus_; }
 
-void DayWidget::setInComing(double inComing_) 
-{ 
-	this->inComing = inComing_;
-	mainLayout->removeWidget(formGroupBox);
-	delete formGroupBox;
-	mainLayout->update();
-	createFormGroupBox();
-	mainLayout->insertWidget(0, formGroupBox);
-	mainLayout->update();
-}
-
-void DayWidget::setExpense(double expense_) 
-{ 
-	this->expense = expense_; 
-	mainLayout->removeWidget(formGroupBox);
-	delete formGroupBox;
-	mainLayout->update();
-	createFormGroupBox();
-	mainLayout->insertWidget(0, formGroupBox);
-	mainLayout->update();
-}
-
-void DayWidget::setSurPlus(double surPlus_) 
-{ 
-	this->surPlus = surPlus_; 
-	mainLayout->removeWidget(formGroupBox);
-	delete formGroupBox;
-	mainLayout->update();
-	createFormGroupBox();
-	mainLayout->insertWidget(0, formGroupBox);
-	mainLayout->update();
-}
-
-QString DayWidget::getDate() const { return this->date; }
-double DayWidget::getInComing() const { return this->inComing; }
-double DayWidget::getExpense() const { return this->expense; }
-double DayWidget::getSurPlus() const { return this->surPlus; }
-
+QDate DayWidget::getDate() const { return _date; }
+double DayWidget::getInComing() const { return _inComing; }
+double DayWidget::getExpense() const { return _expense; }
+double DayWidget::getSurPlus() const { return _surPlus; }

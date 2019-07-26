@@ -1,9 +1,8 @@
 #include "loginwindow.h"
-#include "dbfasade.h"
+#include "dbsingleton.h"
 #include "registrationwindow.h"
 #include "mainwindow.h"
 
-#include <QGroupBox>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -14,111 +13,81 @@
 #include <QMenu>
 
 LoginWindow::LoginWindow()
-{	
-	//setAttribute(Qt::WA_DeleteOnClose);
-	this->setGeometry(300, 100, 500, 500);
-	createMenu();
-	createFormGroupBox();
-	createHorizontalGroupBox();
+{
+	this->setGeometry(300, 100, 500, 330);
+	this->setFixedSize(500, 330);
 
-	sdb = new DBFasade;
+	//_sdb = DATABASE;
 
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainLayout->setMenuBar(menuBar);
-	mainLayout->addWidget(horizontalGroupBox);
-	mainLayout->addWidget(formGroupBox);
-	setLayout(mainLayout);
+	_mainLayout = new QVBoxLayout;
+	createHorizontalLayout();
+	createFormLayout();
+	setLayout(_mainLayout);
 
 	setWindowTitle("Welcome!");
 }
 
-void LoginWindow::createMenu()
+LoginWindow::~LoginWindow() {}
+
+void LoginWindow::createHorizontalLayout() 
 {
-	//вынести меню отдельным классом
-	menuBar = new QMenuBar;
+	QPixmap pix(":logo.png");
 
-	fileMenu = new QMenu(tr("&Menu"), this);
-	exitAction = fileMenu->addAction(tr("&Exit"));
-	menuBar->addMenu(fileMenu);
-
-	connect(exitAction, &QAction::triggered, this, &QDialog::accept);
-}
-
-void LoginWindow::createFormGroupBox()
-{
-	formGroupBox = new QGroupBox(tr("Authorization:"));
-	login = new QLineEdit;
-	pass = new QLineEdit;
-	pass->setEchoMode(QLineEdit::Password);
-
-	QFormLayout *layout = new QFormLayout;
-	layout->addRow(new QLabel(tr("Login: ")), login);
-	layout->addRow(new QLabel(tr("Password: ")), pass);
-
-	QPushButton *enterButton = new QPushButton(tr("Sign-IN"), this);
-	QPushButton *registrButton = new QPushButton(tr("Create new User"), this);
-	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
-	connect(registrButton, SIGNAL(clicked()), this, SLOT(on_registrButton_clicked()));
-	//enterButton->setGeometry(QRect(QPoint(100, 100), QSize(200, 50)));
-	layout->addWidget(enterButton);
-	layout->addWidget(registrButton);
-
-	formGroupBox->setLayout(layout);
-}
-
-void LoginWindow::createHorizontalGroupBox()
-{
-	//слой шапки
-	QPixmap pix("logo.png");
-
-	horizontalGroupBox = new QGroupBox;
 	QHBoxLayout *layout = new QHBoxLayout;
 
 	QLabel *logoLabel = new QLabel;
 	logoLabel->setPixmap(pix);
 	layout->addWidget(logoLabel);
 
-	horizontalGroupBox->setLayout(layout);
+	_mainLayout->addLayout(layout);
+}
+
+void LoginWindow::createFormLayout() 
+{
+	_login = new QLineEdit;
+	_pass = new QLineEdit;
+	_pass->setEchoMode(QLineEdit::Password);
+
+	QFormLayout *layout = new QFormLayout;
+	layout->addRow(new QLabel(tr("Login: ")), _login);
+	layout->addRow(new QLabel(tr("Password: ")), _pass);
+
+	QPushButton *enterButton = new QPushButton(tr("Sign-IN"), this);
+	QPushButton *registrButton = new QPushButton(tr("Create new User"), this);
+
+	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
+	connect(registrButton, SIGNAL(clicked()), this, SLOT(on_registrButton_clicked()));
+
+	layout->addWidget(enterButton);
+	layout->addWidget(registrButton);
+	_mainLayout->addLayout(layout);
 }
 
 void LoginWindow::on_enterButton_clicked()
 {
-	if (!(this->login->text() == "" || this->pass->text() == "")) {
-	bool isCorrect = sdb->authRequest(this->login->text(), this->pass->text());
+	if (!(this->_login->text() == "" || this->_pass->text() == "")) {
+		//bool isCorrect = _sdb->authRequest(this->_login->text(), this->_pass->text());
+		bool isCorrect = DATABASE.authRequest(this->_login->text(), this->_pass->text());
 
-	if (!isCorrect) {
-		qDebug() << "Auth is failed! Input correct data!";
-	}
-	else {
-		qDebug() << "Auth is success!";
-		this->close();
-		mainWindow = new MainWindow;
-		mainWindow->show();
-	}
+
+		if (!isCorrect) {
+			qDebug() << "Auth is failed! Input correct data!";
+		}
+		else {
+			qDebug() << "Auth is success!";
+			this->close();
+			MainWindow *mainWindow = new MainWindow;
+			mainWindow->show();
+		}
 	}
 	else {
 		qDebug() << "ZAPOLNITE POLYA !";
 	}
-
 }
 
 void LoginWindow::on_registrButton_clicked()
 {
 	this->close();
-	registrWindow = new RegistrationWindow;
-	registrWindow->show();
-}
-
-LoginWindow::~LoginWindow() {
-	
-	
-	//delete sdb;
-
-	delete menuBar;
-	delete formGroupBox;
-	delete horizontalGroupBox;
-	delete login;
-	delete pass;
-	delete fileMenu;
-	delete exitAction;
+	_registrWindow = new RegistrationWindow;
+	_registrWindow->show();
 }

@@ -4,48 +4,35 @@
 #include <QDialog>
 #include <QDate>
 
-class QAction;
-class QMenu;
-class QMenuBar;
-class QPushButton;
-class QTextBrowser;
-class QGroupBox;
 class QVBoxLayout;
-class DBFasade;
+class QGridLayout;
+class QLabel;
 
-class MainWindow : public QDialog
+class MainWindow :public QDialog
 {
 	Q_OBJECT
 
 public:
 	MainWindow();
 	~MainWindow();
-
-public slots:
-	void changeMonth(QDate date);
-	void pushChanges();
-	void pullChanges();
-	void makeChanges(QString date_);
+private slots:
+	void makeChanges(QDate date_);
 	void aboutAction();
 	void instructAction();
 
-private:
+	void addMonth();
+	void subMonth();
+
+protected:
 	void createMenu();
-	void createHorizontalGroupBox();
-	void createHorizontalButtonBox();
-	void calendar();
+	void createCalendarGroupBox();
 	void reRenderCalendar();
 
-	QDate selectedDate;
-	QVBoxLayout *windowLayout;
-	QGroupBox *horizontalGroupBox;
-	QGroupBox *horizontalButtonBox;
-	QGroupBox *calendarGridGroupBox;
-	
-	QMenuBar *menuBar;
-	QMenu *fileMenu;
-	QAction *exitAction;
+	void createMonthMenu();
 
-	DBFasade *sdb;
+	QDate _selectedDate;
+	QGridLayout *_calendarLayout;
+	QLabel *_currentDateLabel;
+	QVBoxLayout *_mainLayout;
 };
 #endif // !MAINWINDOW_H

@@ -4,21 +4,20 @@
 #include <QSplashScreen>
 #include <QLabel>
 
-#include "mainwindow.h"
 #include "loginwindow.h"
+#include "dbsingleton.h"
 
-static const int  LOAD_TIME_MSEC = 5 * 1000;
+static const int  LOAD_TIME_MSEC = 3 * 1000;
 static const int  PROGRESS_X_PX = 262;
 static const int  PROGRESS_Y_PX = 399;
 static const int  PROGRESS_WIDTH_PX = 316;
 static const int  PROGRESS_HEIGHT_PX = 44;
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) 
 {
 	QApplication app(argc, argv);
 
-	//все картинки должны лежать в папке images 
-	QPixmap pix("loadScreen.png");
+	QPixmap pix(":loadScreen.png");
 	QSplashScreen *splashScreen = new QSplashScreen(pix);
 	splashScreen->show();
 
@@ -51,5 +50,5 @@ int main(int argc, char *argv[])
 
 	splashScreen->finish(&loginwindow);
 
-    return app.exec();
+	return app.exec();
 }

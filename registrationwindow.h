@@ -3,15 +3,9 @@
 
 #include <QDialog>
 
-class QAction;
-class QLabel;
-class QGroupBox;
+//class DBSingleton;
 class QLineEdit;
-class QPushButton;
-class QTextEdit;
-class QMenu;
-class QMenuBar;
-class DBFasade;
+class QVBoxLayout;
 class LoginWindow;
 
 class RegistrationWindow : public QDialog
@@ -23,24 +17,19 @@ public:
 	~RegistrationWindow();
 
 private slots:
-    void on_enterButton_clicked();
-	void go_to_loginwindow();
+	void on_enterButton_clicked();
+	void on_loginButton_clicked();
 
 private:
-	void createHorizontalGroupBox();
-	void createMenu();
-	void createFormGroupBox();
+	void createHorizontalLayout();
+	void createFormLayout();
 
-	QMenuBar *menuBar;
-	QGroupBox *horizontalGroupBox;
-	QGroupBox *formGroupBox;
-	QLineEdit *login;
-	QLineEdit *pass;
-	QLineEdit *confirmPass;
+	QVBoxLayout *_mainLayout;
+	QLineEdit *_login;
+	QLineEdit *_pass;
+	QLineEdit *_confirmPass;
 
-	LoginWindow *loginWindow;
-	QMenu *fileMenu;
-	QAction *exitAction;
-	DBFasade *sdb;
+	//DBSingleton &_sdb;
+	LoginWindow *_loginWindow;
 };
 #endif // !REGISTRATIONWINDOW_H

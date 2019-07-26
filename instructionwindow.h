@@ -14,6 +14,6 @@ public:
 private:
 	void fillInfo();
 
-	QLabel *aboutInfo;
+	QLabel *_aboutInfo;
 };
 #endif // !INSTRUCTIONWINDOW_H

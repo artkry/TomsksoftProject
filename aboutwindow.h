@@ -8,13 +8,12 @@ class QLabel;
 class AboutWindow : public QDialog
 {
 	Q_OBJECT
-
 public:
 	AboutWindow(QDialog *parent);
 	~AboutWindow();
 private:
 	void fillInfo();
 
-	QLabel *aboutInfo;
+	QLabel *_aboutInfo;
 };
 #endif // !ABOUTWINDOW_H

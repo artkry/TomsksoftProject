@@ -1,5 +1,6 @@
 #include "registrationwindow.h"
-#include "dbfasade.h"
+//#include "dbfasade.h"
+#include "dbsingleton.h"
 #include "loginwindow.h"
 
 #include <QGroupBox>
@@ -14,94 +15,66 @@
 
 RegistrationWindow::RegistrationWindow()
 {
-	//setAttribute(Qt::WA_DeleteOnClose);
-	this->setGeometry(300, 100, 500, 500);
-	createMenu();
-	createHorizontalGroupBox();
-	createFormGroupBox();
+	this->setGeometry(300, 100, 500, 350);
+	this->setFixedSize(500, 350);
 
-	sdb = new DBFasade;
+	//_sdb = DBSingleton::getInstance();
 
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainLayout->setMenuBar(menuBar);
-	mainLayout->addWidget(horizontalGroupBox);
-	mainLayout->addWidget(formGroupBox);
-	setLayout(mainLayout);
+	_mainLayout = new QVBoxLayout;
+	createHorizontalLayout();
+	createFormLayout();
+	setLayout(_mainLayout);
 
-	setWindowTitle("Welcome!");
-
+	setWindowTitle("Registration");
 }
 
-RegistrationWindow::~RegistrationWindow()
-{
-	//delete sdb;
-	
-	delete menuBar;
-	delete horizontalGroupBox;
-	delete formGroupBox;
-	delete login;
-	delete pass;
-	delete fileMenu;
-	delete exitAction;
-}
+RegistrationWindow::~RegistrationWindow() {}
 
-void RegistrationWindow::createHorizontalGroupBox() 
+void RegistrationWindow::createHorizontalLayout()
 {
-	//слой шапки
-	QPixmap pix("logo.png");
-	
-	horizontalGroupBox = new QGroupBox;
+	QPixmap pix(":logo.png");
+
 	QHBoxLayout *layout = new QHBoxLayout;
-	
+
 	QLabel *logoLabel = new QLabel;
 	logoLabel->setPixmap(pix);
 	layout->addWidget(logoLabel);
 
-	horizontalGroupBox->setLayout(layout);
+	_mainLayout->addLayout(layout);
 }
 
-void RegistrationWindow::createFormGroupBox() 
+void RegistrationWindow::createFormLayout()
 {
-	formGroupBox = new QGroupBox(tr("Registration: "));
-	login = new QLineEdit;
-	pass = new QLineEdit;
-	confirmPass = new QLineEdit;
-	pass->setEchoMode(QLineEdit::Password);
-	confirmPass->setEchoMode(QLineEdit::Password);
+	_login = new QLineEdit;
+	_pass = new QLineEdit;
+	_confirmPass = new QLineEdit;
 	
+	_pass->setEchoMode(QLineEdit::Password);
+	_confirmPass->setEchoMode(QLineEdit::Password);
+
 	QFormLayout *layout = new QFormLayout;
-	layout->addRow(new QLabel(tr("Login: ")), login);
-	layout->addRow(new QLabel(tr("Password: ")), pass);
-	layout->addRow(new QLabel(tr("Confirm password: ")), confirmPass);
+	layout->addRow(new QLabel(tr("Login: ")), _login);
+	layout->addRow(new QLabel(tr("Password: ")), _pass);
+	layout->addRow(new QLabel(tr("Confirm Password: ")), _confirmPass);
 
 	QPushButton *enterButton = new QPushButton(tr("Registration"), this);
-	QPushButton *gotologin = new QPushButton(tr("Return to log-in"), this);
+	QPushButton *loginButton = new QPushButton(tr("Back to Sign-In"), this);
+
 	connect(enterButton, SIGNAL(clicked()), this, SLOT(on_enterButton_clicked()));
-	connect(gotologin, SIGNAL(clicked()), this, SLOT(go_to_loginwindow()));
+	connect(loginButton, SIGNAL(clicked()), this, SLOT(on_loginButton_clicked()));
+
 	layout->addWidget(enterButton);
-	layout->addWidget(gotologin);
-
-	formGroupBox->setLayout(layout);
-
-
+	layout->addWidget(loginButton);
+	_mainLayout->addLayout(layout);
 }
 
-void RegistrationWindow::createMenu() 
+void RegistrationWindow::on_enterButton_clicked()
 {
-	menuBar = new QMenuBar;
+	if (this->_pass->text() == this->_confirmPass->text()) {
 
-	fileMenu = new QMenu(tr("&Menu"), this);
-	exitAction = fileMenu->addAction(tr("&Exit"));
-	menuBar->addMenu(fileMenu);
+		//bool isCorrect = _sdb->createUser(this->_login->text(), this->_pass->text());
+		bool isCorrect = DATABASE.createUser(this->_login->text(), this->_pass->text());
 
-	connect(exitAction, &QAction::triggered, this, &QDialog::accept);
-}
-
-void RegistrationWindow::on_enterButton_clicked() 
-{
-	if (this->pass->text() == this->confirmPass->text()) {
-
-		bool isCorrect = sdb->createUser(this->login->text(), this->pass->text());
 
 		if (!isCorrect) {
 			qDebug() << "Registration is failed! Input correct data!";
@@ -116,9 +89,9 @@ void RegistrationWindow::on_enterButton_clicked()
 	}
 }
 
-void RegistrationWindow::go_to_loginwindow()
+void RegistrationWindow::on_loginButton_clicked()
 {
 	this->close();
-	loginWindow = new LoginWindow;
-	loginWindow->show();
+	_loginWindow = new LoginWindow;
+	_loginWindow->show();
 }
